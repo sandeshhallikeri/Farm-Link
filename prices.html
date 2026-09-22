@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mandi Prices | FarmLink</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2933;
+    }
+
+    nav {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 7%;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .logo { font-size: 22px; font-weight: 700; text-decoration: none; color: #1f3d2b; }
+    .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
+    .nav-links a { text-decoration: none; color: #333; font-size: 15px; }
+    .nav-links a:hover, .nav-links a.active { color: #2e7d32; }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 26px 24px 50px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; color: #0b3d6e; }
+    .note { margin: 0; color: #555; font-size: 14px; }
+
+    .toolbar { display: flex; gap: 8px; }
+    .toolbar button {
+      border: 1px solid #cfd8dc;
+      background: #fff;
+      padding: 9px 13px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .toolbar button:hover { background: #f0f7f1; }
+
+    .filters {
+      background: #fff;
+      border: 1px solid #d6dce1;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      margin-bottom: 18px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .filter label {
+      display: block;
+      font-size: 12px;
+      color: #59636e;
+      margin: 0 0 5px 8px;
+      font-weight: 600;
+    }
+
+    .filter select {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #cfd8df;
+      border-radius: 7px;
+      background: #fff;
+      padding: 9px 12px;
+      font-size: 15px;
+      color: #17202a;
+      outline: none;
+    }
+
+    .filter select:focus {
+      border-color: #0a6ebd;
+      box-shadow: 0 0 0 2px rgba(10,110,189,.12);
+    }
+
+    .filter select:disabled {
+      background: #f2f4f6;
+      color: #8b949e;
+      cursor: not-allowed;
+    }
+
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .go-btn, .reset-btn {
+      min-width: 100px;
+      min-height: 44px;
+      border: 0;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0 18px;
+    }
+
+    .go-btn { background: #0a6ebd; color: #fff; }
+    .go-btn:hover { background: #085a9a; }
+    .reset-btn { background: #697586; color: #fff; }
+    .reset-btn:hover { background: #566171; }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .selection {
+      font-size: 17px;
+      font-weight: 700;
+      color: #263238;
+    }
+
+    #status {
+      margin: 0;
+      font-size: 14px;
+      color: #0a6ebd;
+    }
+    #status.error { color: #b42318; }
+
+    .table-wrap {
+      overflow: auto;
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1120px;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: #0d78a4;
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 9px;
+      border: 1px solid #0a668c;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    thead tr:nth-child(2) th {
+      background: #6f9eb0;
+    }
+
+    tbody td {
+      padding: 10px;
+      border: 1px solid #dfe3e7;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) { background: #f5f7f8; }
+    tbody tr:hover { background: #eef7fb; }
+    .text { text-align: left; }
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .empty {
+      text-align: center !important;
+      padding: 30px !important;
+      color: #697586;
+    }
+
+    .loading {
+      opacity: .65;
+      pointer-events: none;
+    }
+
+    .footnote {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1050px) {
+      .filter-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .page { padding: 20px 12px 40px; }
+      .filter-grid { grid-template-columns: 1fr; }
+      .filter-actions { justify-content: stretch; }
+      .go-btn, .reset-btn { flex: 1; }
+    }
+
+    @media print {
+      nav, .filters, .toolbar, #status, .footnote { display: none !important; }
+      .page { padding: 0; max-width: none; }
+      .table-wrap { border: 0; }
+    }
+        .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      border: 1px solid #cfd8dc;
+      background: #fff;
+      padding: 7px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: #f0f7f1;
+    }
+
+    .pagination button.active {
+      background: #2e7d32;
+      color: #fff;
+      border-color: #2e7d32;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination .page-info {
+      margin-right: 10px;
+      font-size: 13px;
+      color: #59636e;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a class="logo" href="main(2).html">🌾 FarmLink</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="prices.html" class="active">Mandi Prices</a></li>
+      <li><a href="farmer.html">Farmer</a></li>
+      <li><a href="buyer.html">Buyer</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Mandi Price &amp; Arrival</h1>
+        <p class="note">Select the required filters and press Go to load matching market prices.</p>
+      </div>
+      <div class="toolbar">
+        <button type="button" id="printBtn">🖨 Print</button>
+        <button type="button" id="csvBtn">⬇ CSV</button>
+      </div>
+    </div>
+
+    <section class="filters" aria-label="Mandi price filters">
+      <div class="filter-grid">
+        <div class="filter">
+          <label for="state">State/UT</label>
+          <select id="state">
+            <option value="">All States/UT</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="district">District</label>
+          <select id="district" disabled>
+            <option value="">All Districts</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="market">Market</label>
+          <select id="market" disabled>
+            <option value="">All Markets</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="commodityGroup">Commodity Group</label>
+          <select id="commodityGroup">
+            <option value="">All Commodity Groups</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="commodity">Commodity</label>
+          <select id="commodity">
+            <option value="">All Commodities</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="variety">Variety</label>
+          <select id="variety" disabled>
+            <option value="">All Varieties</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="grade">Grade</label>
+          <select id="grade" disabled>
+            <option value="">All Grades</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label for="date">Date</label>
+          <select id="date">
+            <option value="">Latest available</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button type="button" class="go-btn" id="goBtn">⚡ Go</button>
+        <button type="button" class="reset-btn" id="resetBtn">Reset</button>
+      </div>
+    </section>
+
+    <div class="summary">
+      <div class="selection" id="selectionText">All States/UT</div>
+      <p id="status" aria-live="polite">Loading filter options…</p>
+    </div>
+
+    <div class="table-wrap">
+      <table id="priceTable">
+        <thead>
+          <tr>
+            <th>State/UT</th>
+            <th>District</th>
+            <th>Market</th>
+            <th>Commodity Group</th>
+            <th>Commodity</th>
+            <th>Variety</th>
+            <th>Grade</th>
+            <th>Min Price<br>(Rs./Quintal)</th>
+            <th>Max Price<br>(Rs./Quintal)</th>
+            <th>Modal Price<br>(Rs./Quintal)</th>
+            <th>Arrival<br>(Metric Tonnes)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="priceBody">
+          <tr>
+            <td colspan="12" class="empty">Choose filters and press Go.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="pagination" class="pagination"></div>
+    </div>
+
+    <p class="footnote">
+      Source: Open Government Data resource “Current Daily Price of Various Commodities from Various Markets (Mandi)”
+      (Directorate of Marketing &amp; Inspection / data.gov.in). The supplied resource contains min/max/modal price
+      fields. It does not provide an arrival-quantity field, so Arrival remains —.
+    </p>
+  </main>
+
+  <script src="agmarknetApi.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const selects = {
+      state: $("state"),
+      district: $("district"),
+      market: $("market"),
+      commodityGroup: $("commodityGroup"),
+      commodity: $("commodity"),
+      variety: $("variety"),
+      grade: $("grade"),
+      date: $("date")
+    };
+
+    let lastResult = null;
+    let loadingCount = 0;
+
+    function setStatus(message, error = false) {
+      $("status").textContent = message;
+      $("status").className = error ? "error" : "";
+    }
+
+    function setLoading(on) {
+      loadingCount += on ? 1 : -1;
+      if (loadingCount < 0) loadingCount = 0;
+      document.querySelector(".filters").classList.toggle("loading", loadingCount > 0);
+    }
+
+    function setOptions(select, values, placeholder, disabled = false) {
+      select.innerHTML = "";
+      const first = document.createElement("option");
+      first.value = "";
+      first.textContent = placeholder;
+      select.appendChild(first);
+
+      (values || []).forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+
+      select.disabled = disabled;
+    }
+
+    function currentFilters() {
+      return {
+        state: selects.state.value,
+        district: selects.district.value,
+        market: selects.market.value,
+        commodityGroup: selects.commodityGroup.value,
+        commodity: selects.commodity.value,
+        variety: selects.variety.value,
+        grade: selects.grade.value,
+        date: selects.date.value
+      };
+    }
+
+    function filterParamsWithout(level) {
+      const f = currentFilters();
+      delete f[level];
+      return f;
+    }
+
+    async function loadOptions(level, preserveValue = "") {
+  const f = filterParamsWithout(level);
+  const requestFilters = JSON.stringify(f);
+
+  setLoading(true);
+
+  try {
+    const data = await window.AGMARKNET_API.getOptions({
+      level,
+      ...f
+    });
+
+    // Ignore an old response if the user changed the filters
+    // while this request was still running.
+    if (JSON.stringify(filterParamsWithout(level)) !== requestFilters) {
+      return;
+    }
+
+        const placeholder = {
+          state: "All States/UT",
+          district: "All Districts",
+          market: "All Markets",
+          commodityGroup: "All Commodity Groups",
+          commodity: "All Commodities",
+          variety: "All Varieties",
+          grade: "All Grades",
+          date: "Latest available"
+        }[level];
+
+        const optionValues = {
+          state: data.states,
+          district: data.districts,
+          market: data.markets,
+          commodityGroup: data.commodityGroups,
+          commodity: data.commodities,
+          variety: data.varieties,
+          grade: data.grades,
+          date: data.dates
+        }[level];
+
+        setOptions(
+          selects[level],
+          optionValues,
+          placeholder,
+          false
+        );
+
+        if (
+          preserveValue &&
+          optionValues &&
+          optionValues.includes(preserveValue)
+        ) {
+          selects[level].value = preserveValue;
+        }
+      } catch (err) {
+        console.error(err);
+        setOptions(selects[level], [], "No options", true);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function loadInitialOptions() {
+      setStatus("Loading State/UT options…");
+
+      try {
+        await loadOptions("state");
+        await loadOptions("commodityGroup");
+        await loadOptions("commodity");
+        await loadOptions("date");
+        setStatus("Select your filters and press Go.");
+      } catch (err) {
+        setStatus(err.message || "Could not load filter options.", true);
+      }
+    }
+
+    async function updateDependentFrom(changedLevel) {
+      const order = ["state", "district", "market", "commodityGroup", "commodity", "variety", "grade"];
+      const index = order.indexOf(changedLevel);
+      if (index < 0) return;
+
+      const affected = order.slice(index + 1);
+
+      // Commodity group and commodity are independent of location in the
+      // UI, but when a location is selected we still refresh them so their
+      // values match the available records.
+      for (const level of affected) {
+        if (level === "state") continue;
+        try {
+          const oldValue = selects[level].value;
+          await loadOptions(level, oldValue);
+        } catch (_) {
+          setStatus("Some filter options could not be refreshed.", true);
+          break;
+        }
+      }
+
+      // Location selects should become disabled until their parent is chosen.
+      selects.district.disabled = !selects.state.value;
+      selects.market.disabled = !selects.district.value;
+      selects.variety.disabled = !selects.commodity.value;
+      selects.grade.disabled = !selects.commodity.value;
+    }
+
+    function selectionText() {
+      const f = currentFilters();
+      const parts = [
+        f.state, f.district, f.market,
+        f.commodityGroup, f.commodity, f.variety, f.grade
+      ].filter(Boolean);
+
+      $("selectionText").textContent = parts.length ? parts.join(" → ") : "All States/UT";
+    }
+
+    const RECORDS_PER_PAGE = 20;
+    let currentPage = 1;
+    let currentRecords = [];
+
+    function renderPrices(result) {
+      const body = $("priceBody");
+
+      currentRecords = result.records || [];
+      currentPage = 1;
+
+      displayPricePage();
+    }
+
+    function displayPricePage() {
+        const body = $("priceBody");
+        const pagination = $("pagination");
+
+        body.innerHTML = "";
+
+        if (!currentRecords.length) {
+          body.innerHTML =
+            `<tr><td colspan="12" class="empty">
+              No mandi records match the selected filters.
+            </td></tr>`;
+
+          pagination.innerHTML = "";
+          return;
+        }
+
+        const totalPages =
+          Math.ceil(currentRecords.length / RECORDS_PER_PAGE);
+
+        const start =
+          (currentPage - 1) * RECORDS_PER_PAGE;
+
+        const end =
+          Math.min(start + RECORDS_PER_PAGE, currentRecords.length);
+
+        const pageRecords =
+          currentRecords.slice(start, end);
+
+        pageRecords.forEach(row => {
+          const tr = document.createElement("tr");
+
+          const cells = [
+            ["text", row.state],
+            ["text", row.district || "—"],
+            ["text", row.mandi || "—"],
+            ["text", row.category],
+            ["text", row.commodity],
+            ["text", row.variety || "—"],
+            ["text", row.grade || "—"],
+            ["num", window.AGMARKNET_API.formatNumber(row.minPrice)],
+            ["num", window.AGMARKNET_API.formatNumber(row.maxPrice)],
+            ["num", window.AGMARKNET_API.formatNumber(row.modalPrice)],
+            ["num", row.arrivalsTonnes ?? "—"],
+            ["text", row.date || "—"]
+          ];
+
+          tr.innerHTML = cells
+            .map(([cls, value]) =>
+              `<td class="${cls}">${escapeHtml(value)}</td>`
+            )
+            .join("");
+
+          body.appendChild(tr);
+        });
+
+        renderPagination(
+          start + 1,
+          end,
+          currentRecords.length,
+          totalPages
+        );
+      }
+
+  function renderPagination(start, end, total, totalPages) {
+    const pagination = $("pagination");
+
+    pagination.innerHTML = "";
+
+    // Record information
+    const info = document.createElement("span");
+
+    info.className = "page-info";
+
+    info.textContent =
+      `Showing ${start}–${end} of ${total} records`;
+
+    pagination.appendChild(info);
+
+    // Previous button
+    const previous = document.createElement("button");
+
+    previous.textContent = "Previous";
+
+    previous.disabled = currentPage === 1;
+
+    previous.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayPricePage();
+      }
+    };
+
+    pagination.appendChild(previous);
+
+    // Page numbers
+    for (let page = 1; page <= totalPages; page++) {
+
+      const button = document.createElement("button");
+
+      button.textContent = page;
+
+      if (page === currentPage) {
+        button.classList.add("active");
+      }
+
+      button.onclick = () => {
+        currentPage = page;
+        displayPricePage();
+      };
+
+      pagination.appendChild(button);
+    }
+
+    // Next button
+    const next = document.createElement("button");
+
+    next.textContent = "Next";
+
+    next.disabled = currentPage === totalPages;
+
+    next.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        displayPricePage();
+      }
+    };
+
+    pagination.appendChild(next);
+  }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function runSearch() {
+      selectionText();
+
+      const filters = currentFilters();
+      setStatus("Loading matching mandi prices…");
+      setLoading(true);
+
+      try {
+        const result = await window.AGMARKNET_API.getPrices({
+          ...filters,
+          limit: 1000
+        });
+
+        lastResult = result;
+        renderPrices(result);
+
+        if (result.total) {
+          setStatus(
+            `Showing ${result.total.toLocaleString("en-IN")} matching record(s).`
+          );
+        } else {
+          setStatus("No records found for the selected filters.");
+      }
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Could not load mandi prices.", true);
+        $("priceBody").innerHTML =
+          `<tr><td colspan="12" class="empty">Unable to load prices. Check the backend and API key.</td></tr>`;
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function resetAll() {
+      Object.values(selects).forEach(select => {
+        select.value = "";
+      });
+
+      setOptions(selects.district, [], "All Districts", true);
+      setOptions(selects.market, [], "All Markets", true);
+      setOptions(selects.variety, [], "All Varieties", true);
+      setOptions(selects.grade, [], "All Grades", true);
+
+      $("priceBody").innerHTML =
+        `<tr><td colspan="12" class="empty">Choose filters and press Go.</td></tr>`;
+      $("selectionText").textContent = "All States/UT";
+      lastResult = null;
+
+      await loadInitialOptions();
+    }
+
+    function downloadCsv() {
+      if (!lastResult || !lastResult.records || !lastResult.records.length) {
+        setStatus("Load price records first, then download CSV.", true);
+        return;
+      }
+
+      const headers = [
+        "State/UT", "District", "Market", "Commodity Group", "Commodity",
+        "Variety", "Grade", "Min Price (Rs./Quintal)",
+        "Max Price (Rs./Quintal)", "Modal Price (Rs./Quintal)",
+        "Arrival (Metric Tonnes)", "Date"
+      ];
+
+      const rows = [headers];
+
+      lastResult.records.forEach(r => rows.push([
+        r.state,
+        r.district,
+        r.market,
+        r.commodityGroup,
+        r.commodity,
+        r.variety,
+        r.grade,
+        r.min_price ?? "",
+        r.max_price ?? "",
+        r.modal_price ?? "",
+        r.arrival_quantity ?? "",
+        r.arrival_date ?? ""  
+      ]));
+
+      const csv = rows.map(row =>
+        row.map(value => `"${String(value ?? "").replaceAll('"', '""')}"`).join(",")
+      ).join("\n");
+
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "farmlink-mandi-prices.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    selects.state.addEventListener("change", async () => {
+      selects.district.value = "";
+      selects.market.value = "";
+      selects.variety.value = "";
+      selects.grade.value = "";
+
+      selects.district.disabled = !selects.state.value;
+      selects.market.disabled = true;
+      selects.variety.disabled = !selects.commodity.value;
+      selects.grade.disabled = !selects.commodity.value;
+
+      try {
+        if (selects.state.value) {
+          await loadOptions("district");
+        } else {
+          setOptions(selects.district, [], "All Districts", true);
+          setOptions(selects.market, [], "All Markets", true);
+        }
+        selectionText();
+      } catch (err) {
+        setStatus(err.message || "Could not load district/market options.", true);
+      }
+    });
+
+    selects.district.addEventListener("change", async () => {
+      selects.market.value = "";
+      selects.market.disabled = !selects.district.value;
+
+      try {
+        if (selects.district.value) await loadOptions("market");
+        selectionText();
+      } catch (err) {
+        setStatus(err.message || "Could not load market options.", true);
+      }
+    });
+
+    selects.market.addEventListener("change", selectionText);
+
+    selects.commodityGroup.addEventListener("change", async () => {
+      selects.commodity.value = "";
+      selects.variety.value = "";
+      selects.grade.value = "";
+      selects.variety.disabled = true;
+      selects.grade.disabled = true;
+
+      try {
+        await loadOptions("commodity");
+        selectionText();
+      } catch (err) {
+        setStatus(err.message || "Could not load commodities.", true);
+      }
+    });
+
+    selects.commodity.addEventListener("change", async () => {
+      selects.variety.value = "";
+      selects.grade.value = "";
+      selects.variety.disabled = !selects.commodity.value;
+      selects.grade.disabled = !selects.commodity.value;
+
+      try {
+        if (selects.commodity.value) {
+          await loadOptions("variety");
+          await loadOptions("grade");
+        } else {
+          setOptions(selects.variety, [], "All Varieties", true);
+          setOptions(selects.grade, [], "All Grades", true);
+        }
+        selectionText();
+      } catch (err) {
+        setStatus(err.message || "Could not load variety/grade options.", true);
+      }
+    });
+
+    selects.variety.addEventListener("change", selectionText);
+    selects.grade.addEventListener("change", selectionText);
+    selects.date.addEventListener("change", selectionText);
+
+    $("goBtn").addEventListener("click", runSearch);
+    $("resetBtn").addEventListener("click", resetAll);
+    $("printBtn").addEventListener("click", () => window.print());
+    $("csvBtn").addEventListener("click", downloadCsv);
+
+    loadInitialOptions();
+  </script>
+</body>
+</html>

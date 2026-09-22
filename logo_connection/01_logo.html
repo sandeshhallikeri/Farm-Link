@@ -1,0 +1,68 @@
+<style>
+  .logo-strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 14px 52px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .logo-track {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    align-items: center;
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .logo-track::-webkit-scrollbar { display: none; }
+  .logo-track a {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    height: 60px;
+  }
+  .logo-track img {
+    height: 48px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+  }
+  .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0a6ebd;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .scroll-btn.left { left: 10px; }
+  .scroll-btn.right { right: 10px; }
+</style>
+
+<div class="logo-strip" aria-label="Related government websites">
+  <button type="button" class="scroll-btn left" onclick="scrollLogos(-280)">&#10094;</button>
+  <div class="logo-track" id="logoTrack">
+    <a href="https://www.digitalindia.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/digital-india.png" alt="Digital India"></a>
+    <a href="https://data.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/data-gov.png" alt="data.gov.in"></a>
+    <a href="https://www.enam.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/enam.png" alt="e-NAM"></a>
+    <a href="https://www.india.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/india-gov.png" alt="india.gov.in"></a>
+    <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/crop-insurance.png" alt="Crop Insurance"></a>
+    <a href="https://mkisan.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/mkisan.png" alt="mKisan"></a>
+    <a href="https://agricoop.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/dac.png" alt="DAC"></a>
+    <a href="https://trifed.tribal.gov.in/" target="_blank" rel="noopener noreferrer"><img src="../images/trifed.png" alt="TRIFED"></a>
+  </div>
+  <button type="button" class="scroll-btn right" onclick="scrollLogos(280)">&#10095;</button>
+</div>
+
+<script>
+  function scrollLogos(amount) {
+    document.getElementById("logoTrack").scrollBy({ left: amount, behavior: "smooth" });
+  }
+</script>

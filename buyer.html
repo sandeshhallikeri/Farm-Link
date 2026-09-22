@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Buyer</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8f3;
+            margin: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .welcome h2 {
+            margin: 0;
+            color: #2e7d32;
+        }
+
+        .welcome p {
+            margin-bottom: 0;
+            color: #555;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+
+        #result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+        }
+
+        .offer-title {
+            color: #2e7d32;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .offers-section {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto 40px;
+        }
+
+        .offer-card {
+            background-color: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .offer-card h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background-color: #fff8e1;
+            color: #8d6e00;
+        }
+
+        .accepted {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .countered {
+            background-color: #fff8e1;
+            color: #8d6e00;
+        }
+
+        .rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* REMOVE BUTTON */
+
+        .remove-offer-button {
+            background-color: #d32f2f;
+            margin-top: 10px;
+        }
+
+        .remove-offer-button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* RESPOND BUTTON */
+
+        .respond-button {
+            background-color: #1565c0;
+            margin-top: 15px;
+        }
+
+        .respond-button:hover {
+            background-color: #0d47a1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header style="position:relative;">
+    <h1>FarmLink</h1>
+    <p>Buyer Marketplace</p>
+
+    <a href="index.html" 
+       style="display:inline-block;
+              margin-top:12px;
+              padding:8px 18px;
+              background-color:white;
+              color:#2e7d32;
+              font-weight:bold;
+              border-radius:6px;
+              text-decoration:none;
+              box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+        🏠 Home
+    </a>
+</header>
+
+
+<!-- LOGGED-IN BUYER -->
+
+<div class="welcome">
+
+    <h2>
+        🏪 Welcome,
+        <span id="buyerName"></span>
+    </h2>
+
+    <p>
+        📍
+        <span id="buyerLocation"></span>
+    </p>
+
+</div>
+
+
+<!-- POST REQUIREMENT -->
+
+<div class="container">
+
+    <h2>Post Your Requirement</h2>
+
+
+    <!-- BUSINESS NAME -->
+
+    <label for="businessName">
+        Business Name
+    </label>
+
+    <input
+        type="text"
+        id="businessName"
+        placeholder="Enter your business name"
+    >
+
+
+    <!-- CROP -->
+
+    <label for="crop">
+        Crop Required
+    </label>
+
+    <select id="crop">
+
+        <option value="">
+            -- Select Crop --
+        </option>
+
+        <option value="Tomato">
+            Tomato
+        </option>
+
+        <option value="Onion">
+            Onion
+        </option>
+
+        <option value="Potato">
+            Potato
+        </option>
+
+        <option value="Brinjal">
+            Brinjal
+        </option>
+
+        <option value="Cabbage">
+            Cabbage
+        </option>
+
+    </select>
+
+
+    <!-- QUANTITY -->
+
+    <label for="quantity">
+        Quantity Required (kg)
+    </label>
+
+    <input
+        type="number"
+        id="quantity"
+        placeholder="Example: 500"
+        min="1"
+    >
+
+
+    <!-- QUALITY -->
+
+    <label for="quality">
+        Required Quality
+    </label>
+
+    <select id="quality">
+
+        <option value="">
+            -- Select Quality --
+        </option>
+
+        <option value="Grade A">
+            Grade A
+        </option>
+
+        <option value="Grade B">
+            Grade B
+        </option>
+
+        <option value="Grade C">
+            Grade C
+        </option>
+
+        <option value="Any Grade">
+            Any Grade
+        </option>
+
+    </select>
+
+
+ 
+
+
+    <!-- LOCATION -->
+
+    <label for="location">
+        Buyer Location
+    </label>
+
+    <select id="location">
+
+        <option value="">
+            -- Select Location --
+        </option>
+
+        <option value="Bengaluru">
+            Bengaluru
+        </option>
+
+        <option value="Kolar">
+            Kolar
+        </option>
+
+        <option value="Mysuru">
+            Mysuru
+        </option>
+
+        <option value="Tumakuru">
+            Tumakuru
+        </option>
+
+        <option value="Chikkaballapur">
+            Chikkaballapur
+        </option>
+
+        <option value="Ramanagara">
+            Ramanagara
+        </option>
+
+    </select>
+
+
+    <!-- REQUIRED DATE -->
+
+    <label for="requiredDate">
+        Required Date
+    </label>
+
+    <input
+        type="date"
+        id="requiredDate"
+    >
+
+
+    <!-- POST BUTTON -->
+
+    <button onclick="postRequirement()">
+        Post Requirement
+    </button>
+
+
+    <!-- RESULT -->
+
+    <div id="result">
+
+        <div class="offer-title">
+            ✅ Requirement Posted
+        </div>
+
+        <p>
+            <strong>Business:</strong>
+            <span id="resultBusiness"></span>
+        </p>
+
+        <p>
+            <strong>Crop:</strong>
+            <span id="resultCrop"></span>
+        </p>
+
+        <p>
+            <strong>Quantity:</strong>
+            <span id="resultQuantity"></span>
+            kg
+        </p>
+
+        <p>
+            <strong>Required Quality:</strong>
+            <span id="resultQuality"></span>
+        </p>
+
+        <p>
+            <strong>Offer Price:</strong>
+            ₹<span id="resultPrice"></span>/kg
+        </p>
+
+        <p>
+            <strong>Location:</strong>
+            <span id="resultLocation"></span>
+        </p>
+
+        <p>
+            <strong>Required Date:</strong>
+            <span id="resultDate"></span>
+        </p>
+
+        <p class="note">
+            Your requirement has been posted successfully
+            and can now be viewed by suitable farmers.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- MY POSTED OFFERS -->
+
+<div class="offers-section">
+
+    <h2>📋 My Posted Offers</h2>
+
+    <div id="myOffers"></div>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   LOAD LOGGED-IN BUYER
+   ===================================================== */
+
+const savedUser =
+    localStorage.getItem("farmlinkUser");
+
+
+if (!savedUser) {
+
+    alert("Please login first.");
+
+}
+else {
+
+    const user =
+        JSON.parse(savedUser);
+
+
+    document.getElementById("buyerName")
+        .textContent = user.name;
+
+
+    document.getElementById("buyerLocation")
+        .textContent = user.location;
+
+
+    /*
+       Automatically fill buyer information
+       from login.
+    */
+
+    document.getElementById("businessName")
+        .value = user.name;
+
+
+    document.getElementById("location")
+        .value = user.location;
+
+}
+
+
+/* =====================================================
+   POST REQUIREMENT
+   ===================================================== */
+
+function postRequirement() {
+
+
+    const businessName =
+        document.getElementById("businessName")
+            .value
+            .trim();
+
+
+    const crop =
+        document.getElementById("crop").value;
+
+
+    const quantity =
+        document.getElementById("quantity").value;
+
+
+    const quality =
+        document.getElementById("quality").value;
+
+
+    const price =
+        document.getElementById("price").value;
+
+
+    const location =
+        document.getElementById("location").value;
+
+
+    const requiredDate =
+        document.getElementById("requiredDate").value;
+
+
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
+
+    if (businessName === "") {
+
+        alert("Please enter your business name.");
+
+        return;
+    }
+
+
+    if (crop === "") {
+
+        alert("Please select a crop.");
+
+        return;
+    }
+
+
+    if (quantity === "" || Number(quantity) <= 0) {
+
+        alert("Please enter a valid quantity.");
+
+        return;
+    }
+
+
+    if (quality === "") {
+
+        alert("Please select the required quality.");
+
+        return;
+    }
+
+
+    if (price === "" || Number(price) <= 0) {
+
+        alert("Please enter a valid offer price.");
+
+        return;
+    }
+
+
+    if (location === "") {
+
+        alert("Please select your location.");
+
+        return;
+    }
+
+
+    if (requiredDate === "") {
+
+        alert("Please select the required date.");
+
+        return;
+    }
+
+
+    /* =====================================================
+       CREATE UNIQUE OFFER
+       ===================================================== */
+
+    const offer = {
+
+        id: String(Date.now()),
+
+        businessName: businessName,
+
+        buyerLocation: location,
+
+        crop: crop,
+
+        quantity: quantity,
+
+        quality: quality,
+
+        price: price,
+
+        requiredDate: requiredDate,
+
+        status: "pending",
+
+        responsePrice: null,
+
+        responseBy: null,
+
+        negotiationHistory: [
+            {
+                by: "buyer",
+                price: Number(price)
+            }
+        ]
+
+    };
+
+
+    /* =====================================================
+       GET EXISTING OFFERS
+       ===================================================== */
+
+    let offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    /* =====================================================
+       ADD NEW OFFER
+       ===================================================== */
+
+    offers.push(offer);
+
+
+    /* =====================================================
+       SAVE OFFERS
+       ===================================================== */
+
+    localStorage.setItem(
+        "farmlinkOffers",
+        JSON.stringify(offers)
+    );
+
+
+    /* =====================================================
+       DISPLAY SUCCESS RESULT
+       ===================================================== */
+
+    document.getElementById("result")
+        .style.display = "block";
+
+
+    document.getElementById("resultBusiness")
+        .textContent = businessName;
+
+
+    document.getElementById("resultCrop")
+        .textContent = crop;
+
+
+    document.getElementById("resultQuantity")
+        .textContent = quantity;
+
+
+    document.getElementById("resultQuality")
+        .textContent = quality;
+
+
+    document.getElementById("resultPrice")
+        .textContent = price;
+
+
+    document.getElementById("resultLocation")
+        .textContent = location;
+
+
+    document.getElementById("resultDate")
+        .textContent = requiredDate;
+
+
+    /* =====================================================
+       REFRESH MY OFFERS
+       ===================================================== */
+
+    loadMyOffers();
+
+
+    alert(
+        "✅ Your requirement has been posted successfully!"
+    );
+
+}
+
+
+/* =====================================================
+   LOAD BUYER'S OWN OFFERS
+   ===================================================== */
+
+function loadMyOffers() {
+
+
+    const currentUser =
+        localStorage.getItem("farmlinkUser");
+
+
+    if (!currentUser) {
+
+        return;
+    }
+
+
+    const user =
+        JSON.parse(currentUser);
+
+
+    const offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    /*
+       Get offers posted by this buyer.
+    */
+
+    const myOffers =
+        offers.filter(function(offer) {
+
+            return (
+                String(offer.businessName).trim() ===
+                String(user.name).trim()
+            );
+
+        });
+
+
+    const container =
+        document.getElementById("myOffers");
+
+
+    /*
+       Get offers personally removed
+       by this buyer.
+    */
+
+    const removedOffers =
+        JSON.parse(
+            localStorage.getItem("buyerRemovedOffers")
+        ) || [];
+
+
+    /*
+       Convert IDs to strings.
+
+       This prevents problems where:
+       123456 is treated differently from
+       "123456".
+    */
+
+    const removedOfferIds =
+        removedOffers.map(function(id) {
+
+            return String(id);
+
+        });
+
+
+    /*
+       Hide only offers that this buyer
+       personally removed.
+    */
+
+    const visibleOffers =
+        myOffers.filter(function(offer) {
+
+            return !removedOfferIds.includes(
+                String(offer.id)
+            );
+
+        });
+
+
+    if (visibleOffers.length === 0) {
+
+        container.innerHTML =
+            "<p>You have not posted any visible offers yet.</p>";
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    visibleOffers.forEach(function(offer) {
+
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "offer-card";
+
+
+        /* =================================================
+           DETERMINE STATUS
+           ================================================= */
+
+        let statusText =
+            "⏳ Waiting for farmer response";
+
+
+        let statusClass =
+            "pending";
+
+
+        if (offer.status === "accepted") {
+
+            statusText =
+                "✅ Farmer accepted your offer";
+
+            statusClass =
+                "accepted";
+
+        }
+
+
+        else if (offer.status === "countered") {
+
+
+            if (offer.responseBy === "farmer") {
+
+                statusText =
+                    "💬 Farmer counter-offered ₹" +
+                    offer.responsePrice +
+                    "/kg";
+
+            }
+
+
+            else if (offer.responseBy === "buyer") {
+
+                statusText =
+                    "💬 Your counter-offer of ₹" +
+                    offer.responsePrice +
+                    "/kg was sent to the farmer";
+
+            }
+
+
+            else {
+
+                statusText =
+                    "💬 Counter-offer: ₹" +
+                    offer.responsePrice +
+                    "/kg";
+
+            }
+
+
+            statusClass =
+                "countered";
+
+        }
+
+
+        else if (offer.status === "rejected") {
+
+            if (offer.responseBy === "farmer") {
+
+                statusText =
+                    "❌ Farmer rejected your offer";
+
+            }
+
+            else {
+
+                statusText =
+                    "❌ Offer rejected";
+
+            }
+
+
+            statusClass =
+                "rejected";
+
+        }
+
+
+        /* =================================================
+           CREATE OFFER CARD
+           ================================================= */
+
+        card.innerHTML = `
+
+            <h3>
+                🌾 ${offer.crop}
+            </h3>
+
+            <p>
+                ⚖️ <strong>Quantity:</strong>
+                ${offer.quantity} kg
+            </p>
+
+            <p>
+                ⭐ <strong>Quality:</strong>
+                ${offer.quality}
+            </p>
+
+            <p>
+                💰 <strong>Your Offer:</strong>
+                ₹${offer.price}/kg
+            </p>
+
+            <p>
+                📍 <strong>Location:</strong>
+                ${offer.buyerLocation}
+            </p>
+
+            <p>
+                📅 <strong>Required Date:</strong>
+                ${offer.requiredDate}
+            </p>
+
+            <div class="status ${statusClass}">
+                ${statusText}
+            </div>
+
+        `;
+
+
+        /* =================================================
+           RESPOND TO FARMER COUNTER
+           ================================================= */
+
+        if (
+            offer.status === "countered" &&
+            offer.responseBy === "farmer"
+        ) {
+
+            const respondButton =
+                document.createElement("button");
+
+
+            respondButton.className =
+                "respond-button";
+
+
+            respondButton.textContent =
+                "💬 Respond to Farmer Counter";
+
+
+            respondButton.onclick = function() {
+
+                /*
+                   Get the latest offers from localStorage.
+                   Do NOT use the old 'offer' variable.
+                */
+
+                const latestOffers =
+                    JSON.parse(
+                        localStorage.getItem("farmlinkOffers") || "[]"
+                    );
+
+
+                const latestOffer =
+                    latestOffers.find(function(item) {
+
+                        return String(item.id) ===
+                            String(offer.id);
+
+                    });
+
+
+                if (!latestOffer) {
+
+                    alert("Offer not found.");
+
+                    return;
+
+                }
+
+
+                /*
+                   Make sure this is actually
+                   a farmer counter-offer.
+                */
+
+                if (
+                    latestOffer.status !== "countered" ||
+                    latestOffer.responseBy !== "farmer"
+                ) {
+
+                    alert(
+                        "There is no new farmer counter-offer to respond to."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Save the latest offer.
+                */
+
+                localStorage.setItem(
+                    "selectedOffer",
+                    JSON.stringify(latestOffer)
+                );
+                localStorage.setItem(
+    "negotiationRole",
+    "buyer"
+);
+
+
+                /*
+                   Open negotiation page.
+                */
+
+                window.location.href =
+                    "negotiation.html";
+
+            };
+
+
+            /*
+               Add Respond button to card.
+            */
+
+            card.appendChild(
+                respondButton
+            );
+
+        }
+
+    });
+
+
+}
+
+
+/* =====================================================
+   REMOVE BUYER OFFER
+   ===================================================== */
+
+function removeBuyerOffer(offerId) {
+
+
+    const confirmRemove =
+        confirm(
+            "Are you sure you want to remove this offer from your posted offers?"
+        );
+
+
+    if (!confirmRemove) {
+
+        return;
+    }
+
+
+    /*
+       Get existing removed IDs.
+    */
+
+    let removedOffers =
+        JSON.parse(
+            localStorage.getItem(
+                "buyerRemovedOffers"
+            )
+        ) || [];
+
+
+    /*
+       Always store ID as STRING.
+    */
+
+    const id =
+        String(offerId);
+
+
+    /*
+       Don't add the same ID twice.
+    */
+
+    if (
+        !removedOffers
+            .map(String)
+            .includes(id)
+    ) {
+
+        removedOffers.push(id);
+
+
+        localStorage.setItem(
+            "buyerRemovedOffers",
+            JSON.stringify(
+                removedOffers
+            )
+        );
+
+    }
+
+
+    /*
+       Refresh the list immediately.
+    */
+
+    loadMyOffers();
+
+}
+
+
+/* =====================================================
+   LOAD OFFERS WHEN PAGE OPENS
+   ===================================================== */
+
+loadMyOffers();
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Login</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8f3;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .role-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #2e7d32;
+            background-color: white;
+            color: #2e7d32;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .role-buttons button.active {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .main-button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 6px;
+            background-color: #2e7d32;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .main-button:hover {
+            background-color: #1b5e20;
+        }
+
+        #message {
+            display: none;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <a href="index.html"
+       style="display:inline-block;
+              margin-bottom:15px;
+              padding:8px 18px;
+              background-color:#2e7d32;
+              color:white;
+              font-weight:bold;
+              border-radius:6px;
+              text-decoration:none;
+              box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+        🏠 Home
+    </a>
+
+    <h1 class="logo">🌱 FarmLink</h1>
+
+    <p class="tagline">
+        AI-Powered Direct Market Linkage
+    </p>
+
+
+    <!-- Role Selection -->
+
+    <div class="role-buttons">
+
+        <button
+            id="farmerButton"
+            class="active"
+            onclick="selectRole('farmer')">
+
+            👨‍🌾 Farmer
+
+        </button>
+
+        <button
+            id="buyerButton"
+            onclick="selectRole('buyer')">
+
+            🏪 Buyer
+
+        </button>
+
+    </div>
+
+
+    <!-- Name -->
+
+    <label for="name">
+        Name / Business Name
+    </label>
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Enter your name"
+    >
+
+
+    <!-- Mobile -->
+
+    <label for="mobile">
+        Mobile Number
+    </label>
+
+    <input
+        type="tel"
+        id="mobile"
+        placeholder="Enter 10-digit mobile number"
+        maxlength="10"
+    >
+
+
+    <!-- Password -->
+
+    <label for="password">
+        Password
+    </label>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Create a password"
+    >
+
+
+    <!-- Location -->
+
+    <label for="location">
+        Location
+    </label>
+
+    <select id="location">
+
+        <option value="">
+            -- Select Location --
+        </option>
+
+        <option value="Bengaluru">
+            Bengaluru
+        </option>
+
+        <option value="Kolar">
+            Kolar
+        </option>
+
+        <option value="Mysuru">
+            Mysuru
+        </option>
+
+        <option value="Tumakuru">
+            Tumakuru
+        </option>
+
+        <option value="Chikkaballapur">
+            Chikkaballapur
+        </option>
+
+        <option value="Ramanagara">
+            Ramanagara
+        </option>
+
+    </select>
+
+
+    <button
+        class="main-button"
+        onclick="registerUser()">
+
+        Register / Login
+
+    </button>
+
+
+    <div id="message"></div>
+
+
+    <p class="note">
+        Your details are used to connect you with suitable
+        farmers or buyers on FarmLink.
+    </p>
+
+</div>
+
+
+<script>
+
+    let selectedRole = "farmer";
+
+
+    // Select Farmer or Buyer
+
+    function selectRole(role) {
+
+        selectedRole = role;
+
+        const farmerButton =
+            document.getElementById("farmerButton");
+
+        const buyerButton =
+            document.getElementById("buyerButton");
+
+
+        if (role === "farmer") {
+
+            farmerButton.classList.add("active");
+
+            buyerButton.classList.remove("active");
+
+        } else {
+
+            buyerButton.classList.add("active");
+
+            farmerButton.classList.remove("active");
+
+        }
+
+    }
+
+
+    // Register / Login
+
+    function registerUser() {
+
+        const name =
+            document.getElementById("name").value.trim();
+
+        const mobile =
+            document.getElementById("mobile").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const location =
+            document.getElementById("location").value;
+
+
+        // Validation
+
+        if (name === "") {
+
+            alert("Please enter your name.");
+
+            return;
+        }
+
+
+        if (!/^[0-9]{10}$/.test(mobile)) {
+
+            alert("Please enter a valid 10-digit mobile number.");
+
+            return;
+        }
+
+
+        if (password.length < 4) {
+
+            alert("Password must contain at least 4 characters.");
+
+            return;
+        }
+
+
+        if (location === "") {
+
+            alert("Please select your location.");
+
+            return;
+        }
+
+
+        // Create user object
+
+        const user = {
+
+            role: selectedRole,
+
+            name: name,
+
+            mobile: mobile,
+
+            password: password,
+
+            location: location
+
+        };
+
+
+        // Save user in browser
+
+        localStorage.setItem(
+            "farmlinkUser",
+            JSON.stringify(user)
+        );
+
+
+        // Save login status
+
+        localStorage.setItem(
+            "farmlinkLoggedIn",
+            "true"
+        );
+
+
+        // Success message
+
+        const message =
+            document.getElementById("message");
+
+        message.style.display = "block";
+
+        message.style.backgroundColor = "#e8f5e9";
+
+        message.style.color = "#2e7d32";
+
+        message.textContent =
+            "✅ Registration successful!";
+
+
+        // Redirect
+
+        setTimeout(function() {
+
+            if (selectedRole === "farmer") {
+
+                window.location.href = "farmer.html";
+
+            } else {
+
+                window.location.href = "buyer.html";
+
+            }
+
+        }, 1000);
+
+    }
+
+</script>
+
+</body>
+
+</html>

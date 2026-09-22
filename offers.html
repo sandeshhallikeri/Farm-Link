@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Buyer Offers</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8f3;
+            margin: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;+
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            margin: 30px auto;
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        .offer-card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .business-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .offer-price {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .detail {
+            margin: 10px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .accept {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .counter {
+            background-color: #f9a825;
+            color: white;
+        }
+
+        .reject {
+            background-color: #c62828;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #counterSection {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+        }
+
+        #counterPrice {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        #status {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <h1>FarmLink</h1>
+
+    <p>Buyer Offers</p>
+
+</header>
+
+
+<div class="container">
+
+    <h2>Available Buyer Offers</h2>
+
+
+    <!-- Buyer Offer -->
+
+    <div class="offer-card">
+
+        <div class="business-name">
+            Sri Lakshmi Vegetables
+        </div>
+
+        <p class="detail">
+            🌾 <strong>Crop:</strong> Tomato
+        </p>
+
+        <p class="detail">
+            ⚖️ <strong>Quantity Required:</strong> 500 kg
+        </p>
+
+        <p class="detail">
+            ⭐ <strong>Required Quality:</strong> Grade A
+        </p>
+
+        <p class="detail">
+            📍 <strong>Buyer Location:</strong> Bengaluru
+        </p>
+
+        <p class="detail">
+            📅 <strong>Required Date:</strong> 05-09-2026
+        </p>
+
+
+        <div class="offer-price">
+
+            💰 Buyer Offer: ₹35/kg
+
+        </div>
+
+
+        <button class="accept" onclick="acceptOffer()">
+            ✅ Accept Offer
+        </button>
+
+
+        <button class="counter" onclick="showCounter()">
+            💬 Make Counter Offer
+        </button>
+
+
+        <button class="reject" onclick="rejectOffer()">
+            ❌ Reject Offer
+        </button>
+
+
+        <!-- Counter Offer -->
+
+        <div id="counterSection">
+
+            <strong>Enter Your Counter Offer</strong>
+
+            <input
+                type="number"
+                id="counterPrice"
+                placeholder="Example: 37"
+                min="1"
+                step="0.01"
+            >
+
+            <button class="counter" onclick="sendCounterOffer()">
+                Send Counter Offer
+            </button>
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div id="status"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+function acceptOffer() {
+
+    const status = document.getElementById("status");
+
+    status.style.display = "block";
+
+    status.style.backgroundColor = "#e8f5e9";
+
+    status.style.color = "#2e7d32";
+
+    status.textContent =
+        "✅ Offer accepted! The buyer will be notified.";
+
+}
+
+
+function showCounter() {
+
+    const counterSection =
+        document.getElementById("counterSection");
+
+    counterSection.style.display = "block";
+
+}
+
+
+function sendCounterOffer() {
+
+    const counterPrice =
+        document.getElementById("counterPrice").value;
+
+    if (counterPrice === "" || counterPrice <= 0) {
+
+        alert("Please enter a valid counter offer.");
+
+        return;
+    }
+
+
+    const status =
+        document.getElementById("status");
+
+    status.style.display = "block";
+
+    status.style.backgroundColor = "#fff8e1";
+
+    status.style.color = "#8d6e00";
+
+    status.textContent =
+        "💬 Counter offer of ₹" +
+        counterPrice +
+        "/kg sent to the buyer.";
+
+}
+
+
+function rejectOffer() {
+
+    const status =
+        document.getElementById("status");
+
+    status.style.display = "block";
+
+    status.style.backgroundColor = "#ffebee";
+
+    status.style.color = "#c62828";
+
+    status.textContent =
+        "❌ Offer rejected.";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Negotiation</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8f3;
+            margin: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        .buyer-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .detail {
+            margin: 10px 0;
+        }
+
+        .price-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f8e9;
+            border-radius: 8px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .counter-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .accept {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .counter {
+            background-color: #f9a825;
+            color: white;
+        }
+
+        .reject {
+            background-color: #c62828;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #status {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .history {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 8px;
+        }
+
+        .history p {
+            margin: 8px 0;
+        }
+
+        .no-offer {
+            text-align: center;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .back-button {
+            background-color: #555;
+            color: white;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <h1>FarmLink</h1>
+
+    <p>Price Negotiation</p>
+
+</header>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2 id="pageTitle">🌾 Price Negotiation</h2>
+
+
+        <!-- Buyer Name -->
+
+        <div class="buyer-name">
+
+            🏪 <span id="buyerName">Loading...</span>
+
+        </div>
+
+
+        <!-- Crop Details -->
+
+        <p class="detail">
+
+            🌾 <strong>Crop:</strong>
+
+            <span id="cropName">Loading...</span>
+
+        </p>
+
+
+        <p class="detail">
+
+            ⚖️ <strong>Quantity:</strong>
+
+            <span id="quantity">Loading...</span> kg
+
+        </p>
+
+
+        <p class="detail">
+
+            ⭐ <strong>Required Quality:</strong>
+
+            <span id="quality">Loading...</span>
+
+        </p>
+
+
+        <p class="detail">
+
+            📍 <strong>Buyer Location:</strong>
+
+            <span id="buyerLocation">Loading...</span>
+
+        </p>
+
+
+        <p class="detail">
+
+            📅 <strong>Required Date:</strong>
+
+            <span id="requiredDate">Loading...</span>
+
+        </p>
+
+
+        <!-- Price Information -->
+
+        <div class="price-box">
+
+            <p>
+
+                <strong>Buyer's Original Offer:</strong>
+
+                ₹<span id="originalPrice">0</span>/kg
+
+            </p>
+
+
+            <p id="farmerCounterRow" style="display:none;">
+
+                <strong>Farmer Counter-Offer:</strong>
+
+                ₹<span id="farmerCounterPrice">0</span>/kg
+
+            </p>
+
+
+            <p id="buyerCounterRow" style="display:none;">
+
+                <strong>Buyer's Counter-Offer:</strong>
+
+                ₹<span id="buyerCounterPriceDisplay">0</span>/kg
+
+            </p>
+
+
+            <p class="price">
+
+                💰 Current Price:
+
+                ₹<span id="currentPrice">0</span>/kg
+
+            </p>
+
+        </div>
+
+
+        <!-- ==============================
+             FARMER ACTIONS
+             ============================== -->
+
+        <div id="farmerActions" style="display:none;">
+
+    <button
+        class="accept"
+        onclick="farmerAcceptOffer()">
+
+        ✅ Accept Current Price
+
+    </button>
+
+
+    <button
+        class="counter"
+        onclick="showFarmerCounterBox()">
+
+        💬 Make Counter-Offer
+
+    </button>
+
+
+    <button
+        class="reject"
+        onclick="farmerRejectOffer()">
+
+        ❌ Reject Offer
+
+    </button>
+
+
+    <div
+        id="farmerCounterBox"
+        class="counter-box"
+        style="display:none;">
+
+        <strong>
+            Enter Your Counter-Offer
+        </strong>
+
+
+        <input
+            type="number"
+            id="farmerCounterInput"
+            placeholder="Example: 76"
+            min="1"
+            step="0.01"
+        >
+
+
+        <button
+            class="counter"
+            onclick="sendFarmerCounter()">
+
+            💬 Send Counter-Offer to Buyer
+
+        </button>
+
+    </div>
+
+</div>
+
+
+            
+
+
+        <!-- ==============================
+             BUYER ACTIONS
+             ============================== -->
+
+        <div id="buyerActions" style="display:none;">
+
+            <button
+                class="accept"
+                onclick="acceptCurrentPrice()">
+
+                ✅ Accept Current Price
+
+            </button>
+
+
+            <button
+                class="counter"
+                onclick="showBuyerCounterBox()">
+
+                💬 Make Counter-Offer
+
+            </button>
+
+
+            <button
+                class="reject"
+                onclick="rejectOffer()">
+
+                ❌ Reject Offer
+
+            </button>
+
+
+            <div
+                id="buyerCounterBox"
+                class="counter-box"
+                style="display:none;">
+
+                <strong>
+
+                    Enter Your Counter-Offer
+
+                </strong>
+
+
+                <input
+                    type="number"
+                    id="buyerCounterInput"
+                    placeholder="Example: 75"
+                    min="1"
+                    step="0.01"
+                >
+
+
+                <button
+                    class="counter"
+                    onclick="sendBuyerCounter()">
+
+                    💬 Send Counter-Offer
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div id="status"></div>
+
+
+        <!-- Negotiation History -->
+
+        <div class="history">
+
+            <h3>📜 Negotiation History</h3>
+
+            <div id="historyContent">
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="back-button"
+            onclick="goBack()">
+
+            ← Back
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   GET CURRENT NEGOTIATION ROLE
+========================================== */
+
+const loggedInUser =
+    JSON.parse(
+        localStorage.getItem("farmlinkUser") || "null"
+    );
+
+
+/*
+   negotiationRole tells us who opened
+   this particular negotiation.
+
+   Farmer portal → farmer
+   Buyer portal  → buyer
+*/
+
+const negotiationRole =
+    localStorage.getItem("negotiationRole");
+
+
+const userRole =
+    negotiationRole
+        ? negotiationRole.trim().toLowerCase()
+        : (
+            loggedInUser && loggedInUser.role
+                ? String(loggedInUser.role).trim().toLowerCase()
+                : ""
+        );
+
+
+/* ==========================================
+   LOAD SELECTED OFFER
+========================================== */
+
+const savedOffer =
+    localStorage.getItem("selectedOffer");
+
+let offer = null;
+
+if (savedOffer) {
+
+    try {
+
+        const selectedOffer =
+            JSON.parse(savedOffer);
+
+        /*
+           Always get the latest version
+           from farmlinkOffers.
+        */
+
+        const allOffers =
+            JSON.parse(
+                localStorage.getItem("farmlinkOffers") || "[]"
+            );
+
+        if (selectedOffer.id) {
+
+            const latestOffer =
+                allOffers.find(function(item) {
+
+                    return String(item.id) ===
+                        String(selectedOffer.id);
+
+                });
+
+            if (latestOffer) {
+
+                offer = latestOffer;
+
+            }
+
+            else {
+
+                offer = selectedOffer;
+
+            }
+
+        }
+
+        else {
+
+            offer = selectedOffer;
+
+        }
+
+        /*
+           Save the latest offer as selectedOffer
+        */
+
+        if (offer) {
+
+            localStorage.setItem(
+                "selectedOffer",
+                JSON.stringify(offer)
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        offer = null;
+
+    }
+
+}
+
+
+/* ==========================================
+   NO OFFER CHECK
+========================================== */
+
+if (!offer) {
+
+    document.querySelector(".card").innerHTML = `
+
+        <h2>⚠️ No Offer Selected</h2>
+
+        <p class="no-offer">
+            Please go back and select the offer.
+        </p>
+
+        <button
+            class="back-button"
+            onclick="goBack()">
+
+            ← Back
+
+        </button>
+
+    `;
+
+}
+
+
+/* ==========================================
+   INITIALIZE NEGOTIATION HISTORY
+========================================== */
+
+function initializeHistory() {
+
+    /*
+       If history already exists, use it.
+    */
+
+    if (
+        Array.isArray(offer.negotiationHistory) &&
+        offer.negotiationHistory.length > 0
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       Create history from the original offer.
+    */
+
+    offer.negotiationHistory = [
+
+        {
+            by: "buyer",
+            price: Number(offer.price)
+        }
+
+    ];
+
+
+    /*
+       If an old farmer counter already exists,
+       preserve it.
+    */
+
+    if (
+        offer.responseBy === "farmer" &&
+        offer.responsePrice !== null &&
+        offer.responsePrice !== undefined
+    ) {
+
+        offer.negotiationHistory.push({
+
+            by: "farmer",
+            price: Number(offer.responsePrice)
+
+        });
+
+    }
+
+
+    /*
+       If an old buyer counter already exists,
+       preserve it.
+    */
+
+    else if (
+        offer.responseBy === "buyer" &&
+        offer.responsePrice !== null &&
+        offer.responsePrice !== undefined &&
+        Number(offer.responsePrice) !== Number(offer.price)
+    ) {
+
+        offer.negotiationHistory.push({
+
+            by: "buyer",
+            price: Number(offer.responsePrice)
+
+        });
+
+    }
+
+
+    saveOffer();
+
+}
+
+
+/* ==========================================
+   SAVE OFFER
+========================================== */
+
+function saveOffer() {
+
+    localStorage.setItem(
+        "selectedOffer",
+        JSON.stringify(offer)
+    );
+
+}
+
+
+/* ==========================================
+   LOAD OFFER DATA
+========================================== */
+
+if (offer) {
+
+    initializeHistory();
+
+
+    document.getElementById("buyerName")
+        .textContent =
+        offer.businessName || "Unknown Buyer";
+
+
+    document.getElementById("cropName")
+        .textContent =
+        offer.crop || "-";
+
+
+    document.getElementById("quantity")
+        .textContent =
+        offer.quantity || "0";
+
+
+    document.getElementById("quality")
+        .textContent =
+        offer.quality || "-";
+
+
+    document.getElementById("buyerLocation")
+        .textContent =
+        offer.buyerLocation || "-";
+
+
+    document.getElementById("requiredDate")
+        .textContent =
+        offer.requiredDate || "-";
+
+
+    document.getElementById("originalPrice")
+        .textContent =
+        offer.price || "0";
+
+
+    updatePriceDisplay();
+
+
+    /*
+       Show correct side
+    */
+
+    if (userRole === "farmer") {
+
+        document.getElementById("pageTitle")
+            .textContent =
+            "🌾 Farmer Counter-Offer";
+
+
+        document.getElementById("farmerActions")
+            .style.display =
+            "block";
+
+
+        document.getElementById("buyerActions")
+            .style.display =
+            "none";
+
+    }
+
+    else {
+
+        document.getElementById("pageTitle")
+            .textContent =
+            "🏪 Respond to Farmer Counter";
+
+
+        document.getElementById("farmerActions")
+            .style.display =
+            "none";
+
+
+        document.getElementById("buyerActions")
+            .style.display =
+            "block";
+
+    }
+
+
+    loadHistory();
+
+}
+
+
+/* ==========================================
+   UPDATE PRICE DISPLAY
+========================================== */
+
+function updatePriceDisplay() {
+
+    const history =
+        offer.negotiationHistory || [];
+
+
+    if (history.length === 0) {
+        return;
+    }
+
+
+    const latest =
+        history[history.length - 1];
+
+
+    const currentPrice =
+        Number(latest.price);
+
+
+    document.getElementById("currentPrice")
+        .textContent =
+        currentPrice;
+
+
+    /*
+       Hide both rows first
+    */
+
+    document.getElementById(
+        "farmerCounterRow"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "buyerCounterRow"
+    ).style.display = "none";
+
+
+    /*
+       Find latest farmer counter
+    */
+
+    const farmerCounters =
+        history.filter(function(item) {
+
+            return item.by === "farmer";
+
+        });
+
+
+    if (farmerCounters.length > 0) {
+
+        const latestFarmer =
+            farmerCounters[farmerCounters.length - 1];
+
+
+        document.getElementById(
+            "farmerCounterPrice"
+        ).textContent =
+            latestFarmer.price;
+
+
+        document.getElementById(
+            "farmerCounterRow"
+        ).style.display =
+            "block";
+
+    }
+
+
+    /*
+       Find latest buyer counter
+    */
+
+    const buyerCounters =
+        history.filter(function(item) {
+
+            return item.by === "buyer";
+
+        });
+
+
+    /*
+       Ignore the original buyer offer
+    */
+
+    const actualBuyerCounters =
+        buyerCounters.filter(function(item, index) {
+
+            return index > 0;
+
+        });
+
+
+    if (actualBuyerCounters.length > 0) {
+
+        const latestBuyer =
+            actualBuyerCounters[
+                actualBuyerCounters.length - 1
+            ];
+
+
+        document.getElementById(
+            "buyerCounterPriceDisplay"
+        ).textContent =
+            latestBuyer.price;
+
+
+        document.getElementById(
+            "buyerCounterRow"
+        ).style.display =
+            "block";
+
+    }
+
+}
+
+
+/* ==========================================
+   LOAD NEGOTIATION HISTORY
+========================================== */
+
+function loadHistory() {
+
+    const historyContainer =
+        document.getElementById(
+            "historyContent"
+        );
+
+
+    historyContainer.innerHTML = "";
+
+
+    const history =
+        offer.negotiationHistory || [];
+
+
+    history.forEach(function(item) {
+
+        const row =
+            document.createElement("p");
+
+
+        if (item.by === "farmer") {
+
+            row.textContent =
+                "👨‍🌾 Farmer → ₹" +
+                item.price +
+                "/kg";
+
+        }
+
+        else {
+
+            row.textContent =
+                "🏪 Buyer → ₹" +
+                item.price +
+                "/kg";
+
+        }
+
+
+        historyContainer.appendChild(row);
+
+    });
+
+}
+
+
+/* ==========================================
+   FARMER - ACCEPT
+========================================== */
+
+function farmerAcceptOffer() {
+
+    if (userRole !== "farmer") {
+
+        alert(
+            "Only the farmer can accept this offer."
+        );
+
+        return;
+
+    }
+
+
+    const history =
+        offer.negotiationHistory || [];
+
+
+    const latest =
+        history[history.length - 1];
+
+
+    const currentPrice =
+        Number(latest.price);
+
+
+    offer.status =
+        "accepted";
+
+
+    offer.responsePrice =
+        currentPrice;
+
+
+    offer.responseBy =
+        "farmer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "accepted",
+        currentPrice,
+        "farmer"
+    );
+
+
+    showStatus(
+        "✅ Deal accepted at ₹" +
+        currentPrice +
+        "/kg!",
+        "#e8f5e9",
+        "#2e7d32"
+    );
+
+
+    disableFarmerActions();
+
+}
+
+
+/* ==========================================
+   FARMER - SHOW COUNTER BOX
+========================================== */
+
+function showFarmerCounterBox() {
+
+    document.getElementById(
+        "farmerCounterBox"
+    ).style.display =
+        "block";
+
+}
+
+
+/* ==========================================
+   FARMER - SEND COUNTER
+========================================== */
+
+function sendFarmerCounter() {
+
+    if (userRole !== "farmer") {
+
+        alert("Only the farmer can use this option.");
+
+        return;
+
+    }
+
+    const input =
+        document.getElementById("farmerCounterInput");
+
+    const price =
+        parseFloat(input.value);
+
+    if (isNaN(price) || price <= 0) {
+
+        alert("Please enter a valid counter-offer.");
+
+        return;
+
+    }
+
+
+    /* Make sure history exists */
+
+    if (!Array.isArray(offer.negotiationHistory)) {
+
+        offer.negotiationHistory = [
+            {
+                by: "buyer",
+                price: Number(offer.price)
+            }
+        ];
+
+    }
+
+
+    const history =
+        offer.negotiationHistory;
+
+
+    const latest =
+        history[history.length - 1];
+
+
+    /*
+       Farmer can counter only after
+       the buyer's latest offer.
+    */
+
+    if (latest && latest.by === "farmer") {
+
+        alert(
+            "You have already sent a counter-offer. Please wait for the buyer to respond."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Add FARMER counter
+    */
+
+    history.push({
+
+        by: "farmer",
+        price: price
+
+    });
+
+
+    /*
+       Update current offer
+    */
+
+    offer.status = "countered";
+
+    offer.responsePrice = price;
+
+    offer.responseBy = "farmer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "countered",
+        price,
+        "farmer"
+    );
+
+
+    updatePriceDisplay();
+
+    loadHistory();
+
+
+    showStatus(
+        "💬 Your counter-offer of ₹" +
+        price +
+        "/kg has been sent to the buyer.",
+        "#fff8e1",
+        "#8d6e00"
+    );
+
+
+    document.getElementById(
+        "farmerCounterBox"
+    ).style.display = "none";
+
+
+    input.value = "";
+
+}
+
+
+/* ==========================================
+   FARMER - REJECT
+========================================== */
+
+function farmerRejectOffer() {
+
+    if (userRole !== "farmer") {
+
+        alert(
+            "Only the farmer can reject this offer."
+        );
+
+        return;
+
+    }
+
+
+    offer.status =
+        "rejected";
+
+
+    offer.responsePrice =
+        null;
+
+
+    offer.responseBy =
+        "farmer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "rejected",
+        null,
+        "farmer"
+    );
+
+
+    showStatus(
+        "❌ Offer rejected. Negotiation ended.",
+        "#ffebee",
+        "#c62828"
+    );
+
+
+    disableFarmerActions();
+
+}
+
+
+/* ==========================================
+   BUYER - SHOW COUNTER BOX
+========================================== */
+
+function showBuyerCounterBox() {
+
+    document.getElementById(
+        "buyerCounterBox"
+    ).style.display =
+        "block";
+
+}
+
+
+/* ==========================================
+   BUYER - ACCEPT
+========================================== */
+
+function acceptCurrentPrice() {
+
+    if (userRole !== "buyer") {
+
+        alert(
+            "Only the buyer can accept this offer."
+        );
+
+        return;
+
+    }
+
+
+    const history =
+        offer.negotiationHistory || [];
+
+
+    const latest =
+        history[history.length - 1];
+
+
+    const currentPrice =
+        Number(latest.price);
+
+
+    offer.status =
+        "accepted";
+
+
+    offer.responsePrice =
+        currentPrice;
+
+
+    offer.responseBy =
+        "buyer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "accepted",
+        currentPrice,
+        "buyer"
+    );
+
+
+    showStatus(
+        "✅ Deal accepted at ₹" +
+        currentPrice +
+        "/kg!",
+        "#e8f5e9",
+        "#2e7d32"
+    );
+
+
+    disableBuyerActions();
+
+}
+
+
+/* ==========================================
+   BUYER - SEND COUNTER
+========================================== */
+
+function sendBuyerCounter() {
+
+    if (userRole !== "buyer") {
+
+        alert("Only the buyer can use this option.");
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById("buyerCounterInput");
+
+    const price =
+        parseFloat(input.value);
+
+
+    if (isNaN(price) || price <= 0) {
+
+        alert("Please enter a valid counter-offer.");
+
+        return;
+
+    }
+
+
+    /* Make sure history exists */
+
+    if (!Array.isArray(offer.negotiationHistory)) {
+
+        offer.negotiationHistory = [
+            {
+                by: "buyer",
+                price: Number(offer.price)
+            }
+        ];
+
+    }
+
+
+    const history =
+        offer.negotiationHistory;
+
+
+    const latest =
+        history[history.length - 1];
+
+
+    /*
+       Buyer can counter only after
+       the farmer's latest offer.
+    */
+
+    if (latest && latest.by === "buyer") {
+
+        alert(
+            "You have already sent an offer. Please wait for the farmer to respond."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Add BUYER counter
+    */
+
+    history.push({
+
+        by: "buyer",
+        price: price
+
+    });
+
+
+    /*
+       Update current offer
+    */
+
+    offer.status = "countered";
+
+    offer.responsePrice = price;
+
+    offer.responseBy = "buyer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "countered",
+        price,
+        "buyer"
+    );
+
+
+    updatePriceDisplay();
+
+    loadHistory();
+
+
+    showStatus(
+        "💬 Your counter-offer of ₹" +
+        price +
+        "/kg has been sent to the farmer.",
+        "#fff8e1",
+        "#8d6e00"
+    );
+
+
+    document.getElementById(
+        "buyerCounterBox"
+    ).style.display = "none";
+
+
+    input.value = "";
+
+}
+
+
+/* ==========================================
+   BUYER - REJECT
+========================================== */
+
+function rejectOffer() {
+
+    if (userRole !== "buyer") {
+
+        alert(
+            "Only the buyer can reject this offer."
+        );
+
+        return;
+
+    }
+
+
+    offer.status =
+        "rejected";
+
+
+    offer.responsePrice =
+        null;
+
+
+    offer.responseBy =
+        "buyer";
+
+
+    saveOffer();
+
+
+    updateMainOffer(
+        offer,
+        "rejected",
+        null,
+        "buyer"
+    );
+
+
+    showStatus(
+        "❌ Offer rejected. Negotiation ended.",
+        "#ffebee",
+        "#c62828"
+    );
+
+
+    disableBuyerActions();
+
+}
+
+
+/* ==========================================
+   SHOW STATUS
+========================================== */
+
+function showStatus(
+    message,
+    background,
+    textColor
+) {
+
+    const status =
+        document.getElementById("status");
+
+
+    status.style.display =
+        "block";
+
+
+    status.style.backgroundColor =
+        background;
+
+
+    status.style.color =
+        textColor;
+
+
+    status.textContent =
+        message;
+
+}
+
+
+/* ==========================================
+   UPDATE MAIN OFFER
+========================================== */
+
+function updateMainOffer(
+    selectedOffer,
+    status,
+    responsePrice,
+    responseBy
+) {
+
+    let offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    let index = -1;
+
+
+    if (selectedOffer.id) {
+
+        index =
+            offers.findIndex(function(item) {
+
+                return String(item.id) ===
+                    String(selectedOffer.id);
+
+            });
+
+    }
+
+
+    if (index === -1) {
+
+        index =
+            offers.findIndex(function(item) {
+
+                return (
+                    item.businessName ===
+                    selectedOffer.businessName &&
+
+                    item.crop ===
+                    selectedOffer.crop &&
+
+                    String(item.quantity) ===
+                    String(selectedOffer.quantity) &&
+
+                    String(item.price) ===
+                    String(selectedOffer.price)
+                );
+
+            });
+
+    }
+
+
+    if (index !== -1) {
+
+        offers[index].status =
+            status;
+
+
+        offers[index].responsePrice =
+            responsePrice;
+
+
+        offers[index].responseBy =
+            responseBy;
+
+
+        /*
+           VERY IMPORTANT:
+           Save complete negotiation history.
+        */
+
+        offers[index].negotiationHistory =
+            selectedOffer.negotiationHistory;
+
+
+        localStorage.setItem(
+            "farmlinkOffers",
+            JSON.stringify(offers)
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   DISABLE FARMER ACTIONS
+========================================== */
+
+function disableFarmerActions() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#farmerActions .accept, " +
+            "#farmerActions .counter, " +
+            "#farmerActions .reject"
+        );
+
+
+    buttons.forEach(function(button) {
+
+        button.disabled = true;
+
+        button.style.opacity = "0.5";
+
+        button.style.cursor =
+            "not-allowed";
+
+    });
+
+}
+
+
+/* ==========================================
+   DISABLE BUYER ACTIONS
+========================================== */
+
+function disableBuyerActions() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#buyerActions .accept, " +
+            "#buyerActions .counter, " +
+            "#buyerActions .reject"
+        );
+
+
+    buttons.forEach(function(button) {
+
+        button.disabled = true;
+
+        button.style.opacity = "0.5";
+
+        button.style.cursor =
+            "not-allowed";
+
+    });
+
+}
+
+
+/* ==========================================
+   BACK BUTTON
+========================================== */
+function goBack() {
+
+    const negotiationRole =
+        localStorage.getItem("negotiationRole");
+
+    if (negotiationRole === "farmer") {
+
+        window.location.href =
+            "farmer.html";
+
+    }
+
+    else if (negotiationRole === "buyer") {
+
+        window.location.href =
+            "buyer.html";
+
+    }
+
+    else {
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

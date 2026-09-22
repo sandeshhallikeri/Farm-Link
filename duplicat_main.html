@@ -1,0 +1,828 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Smart Market Linkage</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f7faf7;
+            color: #1f3d2b;
+        }
+
+        /* Navigation */
+        nav {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background-color: white;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            margin-right: 6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #2e7d32;
+        }
+
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border: 1px solid #2e7d32;
+            border-radius: 7px;
+            color: #2e7d32;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+/* Top Photo Slider */
+
+.photo-slider {
+    position: relative;
+    width: 100%;
+    height: 430px;
+    overflow: hidden;
+    background: #ddd;
+}
+
+.photo-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: 2px solid white;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.photo-arrow.left {
+    left: 25px;
+}
+
+.photo-arrow.right {
+    right: 25px;
+}
+
+.photo-dots {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 9px;
+}
+
+.photo-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.photo-dot.active {
+    opacity: 1;
+}
+
+
+/* GOVERNMENT WEBSITE SCROLL STRIP */
+
+.logo-strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    background: #ffffff;
+    padding: 10px 50px;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.logo-track {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    height: 70px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.logo-track::-webkit-scrollbar {
+    display: none;
+}
+
+.logo-track a {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    text-decoration: none;
+}
+
+.logo-track img {
+    display: block;
+    height: 55px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+}
+
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #0a6ebd;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-btn:hover {
+    background: #085a9a;
+}
+
+.scroll-btn.left {
+    left: 8px;
+}
+
+.scroll-btn.right {
+    right: 8px;
+}
+
+/* Hero Section */
+        .hero {
+            min-height: 530px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 70px 7%;
+            gap: 50px;
+        }
+
+        .hero-text {
+            max-width: 600px;
+        }
+
+        .hero-text h1 {
+            font-size: 52px;
+            line-height: 1.1;
+            margin-bottom: 22px;
+        }
+
+        .hero-text h1 span {
+            color: #2e7d32;
+        }
+
+        .hero-text p {
+            font-size: 19px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            padding: 14px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .primary-btn {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+        }
+
+        .secondary-btn {
+            background-color: white;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+
+        /* Hero visual */
+        .hero-card {
+            width: 390px;
+            padding: 35px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .hero-card h3 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .price {
+            padding: 15px;
+            background-color: #f1f8f2;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .price strong {
+            font-size: 22px;
+            color: #2e7d32;
+        }
+
+        /* How it works */
+        .how-section {
+            background-color: white;
+            padding: 70px 7%;
+            text-align: center;
+        }
+
+        .how-section h2 {
+            font-size: 34px;
+            margin-bottom: 15px;
+        }
+
+        .how-section > p {
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            width: 180px;
+            padding: 25px 15px;
+            border-radius: 12px;
+            background-color: #f7faf7;
+        }
+
+        .step-number {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .step h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Features */
+        .features {
+            padding: 70px 7%;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 34px;
+            margin-bottom: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .feature {
+            background-color: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1f3d2b;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        /* Mobile */
+        @media (max-width: 800px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+
+            .hero-card {
+                width: 100%;
+                max-width: 390px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .hero-text h1 {
+                font-size: 38px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+
+        <div class="logo">
+            <span>🌾</span> FarmLink
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="logo.html">Home</a></li>
+            <li><a href="prices.html">Mandi Prices</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="login.html" class="login-btn">Login</a></li>
+        </ul>
+
+    </nav>
+
+<!-- Photo Slider -->
+<section class="photo-slider">
+
+    <img id="mainPhoto"
+         src="photos/PH1.png"
+         alt="Agriculture and Farming">
+
+    <button class="photo-arrow left"
+            onclick="previousPhoto()">
+        ❮
+    </button>
+
+    <button class="photo-arrow right"
+            onclick="nextPhoto()">
+        ❯
+    </button>
+
+    <div class="photo-dots">
+
+        <span class="photo-dot active"
+              onclick="showPhoto(0)"></span>
+
+        <span class="photo-dot"
+              onclick="showPhoto(1)"></span>
+
+        <span class="photo-dot"
+              onclick="showPhoto(2)"></span>
+
+        <span class="photo-dot"
+              onclick="showPhoto(3)"></span>
+
+        <span class="photo-dot"
+              onclick="showPhoto(4)"></span>
+
+        <span class="photo-dot"
+              onclick="showPhoto(5)"></span>
+
+    </div>
+
+</section>
+
+<!-- Hero -->
+<section class="hero">
+
+        <div class="hero-text">
+
+            <h1>
+                Know Your Price.<br>
+                <span>Find Your Buyer.</span><br>
+                Sell Better.
+            </h1>
+
+            <p>
+                FarmLink connects farmers with local buyers using
+                market-price information, transparent negotiation,
+                and convenient transportation options.
+            </p>
+
+            <div class="buttons">
+
+                <a href="farmer.html" class="primary-btn">
+                    🌱 I'm a Farmer
+                </a>
+
+                <a href="buyer.html" class="secondary-btn">
+                    🏪 I'm a Buyer
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Price Card -->
+        <div class="hero-card">
+
+            <h3>📊 Today's Market Example</h3>
+
+            <div class="price">
+                Tomato<br>
+                <strong>₹38/kg</strong>
+                <small> Modal Market Price</small>
+            </div>
+
+            <div class="price">
+                Nearby Buyer<br>
+                <strong>₹40/kg</strong>
+                <small> Current Offer</small>
+            </div>
+
+            <div class="price">
+                Transport<br>
+                <strong>₹300</strong>
+                <small> Estimated Cost</small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+
+        <h2>How FarmLink Works</h2>
+
+        <p>
+            From finding the right price to completing the sale.
+        </p>
+
+        <div class="steps">
+
+            <div class="step">
+                <div class="step-number">①</div>
+                <h3>Check Price</h3>
+                <p><a href="prices.html">View market and APMC reference prices.</a></p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">②</div>
+                <h3>Find Buyer</h3>
+                <p>Discover buyers looking for your crop.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">③</div>
+                <h3>Negotiate</h3>
+                <p>Compare offers and make a counter-offer.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">④</div>
+                <h3>Transport</h3>
+                <p>Find suitable local transport options.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">⑤</div>
+                <h3>Sell</h3>
+                <p>Calculate your estimated net return.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+  
+    <!-- Features -->
+    <section class="features" id="features">
+
+        <h2>One Platform. Complete Market Linkage.</h2>
+
+        <div class="feature-grid">
+
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Market Prices</h3>
+                <p>
+                    Access reference prices from agricultural markets.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🤝</div>
+                <h3>Buyer Matching</h3>
+                <p>
+                    Connect farmers with local retail and wholesale buyers.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">💬</div>
+                <h3>Negotiation</h3>
+                <p>
+                    Compare offers and negotiate using price information.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🚚</div>
+                <h3>Transport</h3>
+                <p>
+                    Find local transport options and estimate delivery costs.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            🌾 FarmLink — Strengthening Market Linkages for Farmers
+        </p>
+
+    </footer>
+
+
+  <div class="logo-strip" aria-label="Related government websites">
+    <button type="button" class="scroll-btn left" onclick="scrollLogos(-280)" aria-label="Previous logos">&#10094;</button>
+
+    <div class="logo-track" id="logoTrack">
+      <a href="https://www.digitalindia.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/digital-india.png" alt="Digital India">
+      </a>
+      <a href="https://data.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/data-gov.png" alt="data.gov.in">
+      </a>
+      <a href="https://www.enam.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/enam.png" alt="e-NAM">
+      </a>
+      <a href="https://www.india.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/india-gov.png" alt="india.gov.in">
+      </a>
+      <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/crop-insurance.png" alt="Crop Insurance">
+      </a>
+      <a href="https://mkisan.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/mkisan.png" alt="mKisan">
+      </a>
+      <a href="https://agricoop.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/dac.png" alt="DAC">
+      </a>
+      <a href="https://trifed.tribal.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/trifed.png" alt="TRIFED">
+      </a>
+      <a href="https://www.seednet.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/seeds.png" alt="Seeds">
+      </a>
+      <a href="https://www.urvarak.nic.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/fertilizer.png" alt="Fertilizer">
+      </a>
+      <a href="https://rkvy.nic.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/rkvy.png" alt="RKVY">
+      </a>
+      <a href="https://nhb.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/nhb.png" alt="NHB">
+      </a>
+      <a href="https://dacnet.nic.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/dacnet.png" alt="DACNET">
+      </a>
+      <a href="https://www.nfsm.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/nfsm.png" alt="NFSM">
+      </a>
+      <a href="https://icar.org.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/icar.png" alt="ICAR">
+      </a>
+      <a href="https://farmech.dac.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/farm-mech.png" alt="Farm Mech">
+      </a>
+      <a href="https://farmer.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/crop-directories.png" alt="Crop Directories">
+      </a>
+      <a href="https://www.nvsp.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/nvsp.png" alt="National Voter Service Portal">
+      </a>
+      <a href="https://krishi.maharashtra.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/maharashtra-agri.png" alt="Maharashtra State Agricultural Board">
+      </a>
+      <a href="https://www.dgciskol.gov.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/dgcis.png" alt="DGCIS">
+      </a>
+      <a href="https://www.sufalbangla.in/" target="_blank" rel="noopener noreferrer">
+        <img src="images/sufal-bangla.jpg" alt="Sufal Bangla">
+      </a>
+    </div>
+
+    <button type="button" class="scroll-btn right" onclick="scrollLogos(280)" aria-label="Next logos">&#10095;</button>
+  </div>
+
+
+  <footer>
+    <div>
+      <h3>Government of India</h3>
+      <p>Department of Agriculture &amp; Farmers Welfare<br>Directorate of Marketing &amp; Inspection</p>
+    </div>
+    <div>
+      <h3>USEFUL LINKS</h3>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Accessibility</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>QUICK LINKS</h3>
+      <ul>
+        <li><a href="#">Website Policy</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Sitemap</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>CONTACT US</h3>
+      <p>Directorate of Marketing &amp; Inspection,<br>A-Block, CGO Complex, NH-IV,<br>Faridabad (Haryana) - 121001</p>
+    </div>
+  </footer>
+
+  <script>
+
+    /* PHOTO SLIDER */
+
+    const photos = [
+        "photos/PH1.png",
+        "photos/PH2.png",
+        "photos/PH3.png",
+        "photos/PH4.png",
+        "photos/PH5.png"
+
+    ];
+
+    let currentPhoto = 0;
+
+    const mainPhoto = document.getElementById("mainPhoto");
+    const photoDots = document.querySelectorAll(".photo-dot");
+
+    function showPhoto(index) {
+
+        currentPhoto = index;
+
+        mainPhoto.src = photos[currentPhoto];
+
+        photoDots.forEach((dot, i) => {
+            dot.classList.toggle(
+                "active",
+                i === currentPhoto
+            );
+        });
+    }
+
+    function nextPhoto() {
+
+        currentPhoto++;
+
+        if (currentPhoto >= photos.length) {
+            currentPhoto = 0;
+        }
+
+        showPhoto(currentPhoto);
+    }
+
+    function previousPhoto() {
+
+        currentPhoto--;
+
+        if (currentPhoto < 0) {
+            currentPhoto = photos.length - 1;
+        }
+
+        showPhoto(currentPhoto);
+    }
+
+    /* Change photo every 5 seconds */
+
+    setInterval(nextPhoto, 5000);
+
+
+    /* GOVERNMENT LOGO SCROLL */
+
+    function scrollLogos(amount) {
+
+        document.getElementById("logoTrack").scrollBy({
+            left: amount,
+            behavior: "smooth"
+        });
+
+    }
+
+</script>
+
