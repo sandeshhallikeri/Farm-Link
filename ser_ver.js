@@ -3,21 +3,14 @@
  * FarmLink Mandi Price Backend
  * ============================================================
  *
- * Architecture:
- *
- * Browser
- *    ↓
- * /api/options
- * /api/prices
- *    ↓
- * Server-side cache
- *    ↓
- * data.gov.in
- *
- * IMPORTANT:
- * - API key stays on the server.
- * - data.gov.in is requested only when cache is empty/expired.
- * - Dropdown filtering is performed locally.
+ * Permanent reliability version:
+ * - Loads API key from .env
+ * - Persistent mandi cache
+ * - 3 automatic retries
+ * - 20 second timeout
+ * - Uses last successful data if data.gov.in fails
+ * - Cache survives server restart
+ * - Does not delete good cache during refresh
  *
  * Requires Node.js 18+
  */
@@ -27,14 +20,82 @@ const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
 
+
+/* ============================================================
+   LOCAL .ENV LOADER
+   ============================================================ */
+
+function loadLocalEnv() {
+    try {
+        const envPath = path.join(__dirname, ".env");
+
+        if (!fs.existsSync(envPath)) {
+            return;
+        }
+
+        const lines =
+            fs.readFileSync(envPath, "utf8")
+                .split(/\r?\n/);
+
+        for (const line of lines) {
+            const trimmed = line.trim();
+
+            if (!trimmed || trimmed.startsWith("#")) {
+                continue;
+            }
+
+            const equalsIndex =
+                trimmed.indexOf("=");
+
+            if (equalsIndex === -1) {
+                continue;
+            }
+
+            const key =
+                trimmed.slice(0, equalsIndex).trim();
+
+            let value =
+                trimmed.slice(equalsIndex + 1).trim();
+
+            if (
+                (value.startsWith('"') &&
+                 value.endsWith('"')) ||
+                (value.startsWith("'") &&
+                 value.endsWith("'"))
+            ) {
+                value = value.slice(1, -1);
+            }
+
+            if (
+                key &&
+                process.env[key] === undefined
+            ) {
+                process.env[key] = value;
+            }
+        }
+
+    } catch (error) {
+        console.warn(
+            "Could not read .env:",
+            error.message
+        );
+    }
+}
+
+loadLocalEnv();
+
+
 /* ============================================================
    CONFIGURATION
    ============================================================ */
 
-const PORT = process.env.PORT || 3000;
+const PORT =
+    process.env.PORT || 3000;
 
 const API_KEY =
-    process.env.DATA_GOV_API_KEY || "";
+    String(
+        process.env.DATA_GOV_API_KEY || ""
+    ).trim();
 
 const RESOURCE_ID =
     "9ef84268-d588-465a-a308-a864a43d0070";
@@ -42,22 +103,46 @@ const RESOURCE_ID =
 const DATA_API =
     `https://api.data.gov.in/resource/${RESOURCE_ID}`;
 
-/*
- * Cache configuration.
- *
- * The server will keep the downloaded mandi records
- * in memory for 10 minutes.
- */
-const CACHE_TTL_MS =
-    10 * 60 * 1000;
 
 /*
- * Number of records downloaded in one request.
- *
- * 5000 is deliberately kept reasonable so that the
- * response is not unnecessarily large.
+ * Fresh cache window:
+ * 30 minutes
  */
-const DATA_LIMIT = 5000;
+const CACHE_TTL_MS =
+    30 * 60 * 1000;
+
+
+/*
+ * Persistent cache file.
+ *
+ * This keeps the last successful mandi data
+ * even after Node.js is restarted.
+ */
+const CACHE_FILE =
+    path.join(
+        __dirname,
+        "mandi-cache.json"
+    );
+
+
+/*
+ * Network protection.
+ */
+const FETCH_TIMEOUT_MS =
+    20 * 1000;
+
+const MAX_FETCH_ATTEMPTS =
+    3;
+
+const RETRY_DELAYS_MS =
+    [2000, 5000, 10000];
+
+
+/*
+ * Number of records downloaded.
+ */
+const DATA_LIMIT =
+    5000;
 
 
 /* ============================================================
@@ -65,12 +150,168 @@ const DATA_LIMIT = 5000;
    ============================================================ */
 
 let mandiCache = {
+
     records: [],
+
     total: 0,
+
     title: "",
+
     fetchedAt: 0,
+
     loadingPromise: null
 };
+
+
+/* ============================================================
+   PERSISTENT CACHE
+   ============================================================ */
+
+function savePersistentCache() {
+
+    try {
+
+        const payload = {
+
+            records:
+                mandiCache.records,
+
+            total:
+                mandiCache.total,
+
+            title:
+                mandiCache.title,
+
+            fetchedAt:
+                mandiCache.fetchedAt
+        };
+
+
+        const temporaryFile =
+            `${CACHE_FILE}.tmp`;
+
+
+        fs.writeFileSync(
+            temporaryFile,
+            JSON.stringify(payload),
+            "utf8"
+        );
+
+
+        fs.renameSync(
+            temporaryFile,
+            CACHE_FILE
+        );
+
+
+        console.log(
+            `Persistent mandi cache saved: ${mandiCache.records.length} records.`
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Could not save persistent mandi cache:",
+            error.message
+        );
+    }
+}
+
+
+function loadPersistentCache() {
+
+    try {
+
+        if (!fs.existsSync(CACHE_FILE)) {
+
+            console.log(
+                "No persistent mandi cache found yet."
+            );
+
+            return;
+        }
+
+
+        const raw =
+            fs.readFileSync(
+                CACHE_FILE,
+                "utf8"
+            );
+
+
+        const saved =
+            JSON.parse(raw);
+
+
+        if (
+            !saved ||
+            !Array.isArray(saved.records) ||
+            saved.records.length === 0 ||
+            !saved.fetchedAt
+        ) {
+
+            console.warn(
+                "Persistent mandi cache is invalid; ignoring it."
+            );
+
+            return;
+        }
+
+
+        mandiCache.records =
+            saved.records;
+
+        mandiCache.total =
+            Number(saved.total) ||
+            saved.records.length;
+
+        mandiCache.title =
+            saved.title ||
+            "Current Daily Mandi Prices";
+
+        mandiCache.fetchedAt =
+            Number(saved.fetchedAt) ||
+            0;
+
+
+        console.log(
+            `Persistent mandi cache loaded: ${mandiCache.records.length} records.`
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Could not load persistent mandi cache:",
+            error.message
+        );
+    }
+}
+
+
+function hasAnyCachedData() {
+
+    return (
+        Array.isArray(
+            mandiCache.records
+        ) &&
+
+        mandiCache.records.length > 0 &&
+
+        mandiCache.fetchedAt > 0
+    );
+}
+
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+}
 
 
 /* ============================================================
@@ -78,9 +319,17 @@ let mandiCache = {
    ============================================================ */
 
 if (!API_KEY) {
+
     console.warn("");
-    console.warn("WARNING: DATA_GOV_API_KEY is not set.");
-    console.warn("Set it before using the Mandi API.");
+
+    console.warn(
+        "WARNING: DATA_GOV_API_KEY is not set."
+    );
+
+    console.warn(
+        "Set it in the .env file."
+    );
+
     console.warn("");
 }
 
@@ -89,9 +338,15 @@ if (!API_KEY) {
    BASIC HELPERS
    ============================================================ */
 
-function sendJson(response, statusCode, data) {
+function sendJson(
+    response,
+    statusCode,
+    data
+) {
 
-    const body = JSON.stringify(data);
+    const body =
+        JSON.stringify(data);
+
 
     response.writeHead(
         statusCode,
@@ -106,6 +361,7 @@ function sendJson(response, statusCode, data) {
                 "*"
         }
     );
+
 
     response.end(body);
 }
@@ -126,6 +382,7 @@ function sendText(
         }
     );
 
+
     response.end(text);
 }
 
@@ -143,14 +400,21 @@ function clean(value) {
 }
 
 
-function matches(value, selected) {
+function matches(
+    value,
+    selected
+) {
 
     if (!selected) {
         return true;
     }
 
-    return clean(value).toLowerCase() ===
-        clean(selected).toLowerCase();
+    return (
+        clean(value)
+            .toLowerCase() ===
+        clean(selected)
+            .toLowerCase()
+    );
 }
 
 
@@ -162,6 +426,7 @@ const GROUP_RULES = [
 
     {
         group: "Cereals",
+
         keys: [
             "wheat",
             "paddy",
@@ -180,6 +445,7 @@ const GROUP_RULES = [
 
     {
         group: "Pulses",
+
         keys: [
             "arhar",
             "tur",
@@ -195,6 +461,7 @@ const GROUP_RULES = [
 
     {
         group: "Oil Seeds",
+
         keys: [
             "groundnut",
             "mustard",
@@ -212,6 +479,7 @@ const GROUP_RULES = [
 
     {
         group: "Fibre Crops",
+
         keys: [
             "cotton",
             "kapas",
@@ -222,6 +490,7 @@ const GROUP_RULES = [
 
     {
         group: "Vegetables",
+
         keys: [
             "onion",
             "potato",
@@ -246,6 +515,7 @@ const GROUP_RULES = [
 
     {
         group: "Fruits",
+
         keys: [
             "apple",
             "banana",
@@ -263,6 +533,7 @@ const GROUP_RULES = [
 
     {
         group: "Spices",
+
         keys: [
             "turmeric",
             "coriander",
@@ -279,21 +550,28 @@ const GROUP_RULES = [
 ];
 
 
-function commodityGroup(commodity) {
+function commodityGroup(
+    commodity
+) {
 
     const lower =
-        clean(commodity).toLowerCase();
+        clean(commodity)
+            .toLowerCase();
+
 
     for (const rule of GROUP_RULES) {
 
         if (
             rule.keys.some(
-                key => lower.includes(key)
+                key =>
+                    lower.includes(key)
             )
         ) {
+
             return rule.group;
         }
     }
+
 
     return "Others";
 }
@@ -303,7 +581,9 @@ function commodityGroup(commodity) {
    NORMALIZE RECORD
    ============================================================ */
 
-function normalizeRecord(record) {
+function normalizeRecord(
+    record
+) {
 
     return {
 
@@ -364,18 +644,6 @@ function normalizeRecord(record) {
    DATA.GOV.IN
    ============================================================ */
 
-/*
- * IMPORTANT:
- *
- * This function intentionally DOES NOT send state,
- * district, market or commodity filters to data.gov.in.
- *
- * We download one dataset and filter it locally.
- *
- * This is what prevents the cascading dropdowns from
- * generating repeated data.gov.in API requests.
- */
-
 async function fetchDataGovRecords() {
 
     if (!API_KEY) {
@@ -385,23 +653,28 @@ async function fetchDataGovRecords() {
         );
     }
 
+
     const url =
         new URL(DATA_API);
+
 
     url.searchParams.set(
         "api-key",
         API_KEY
     );
 
+
     url.searchParams.set(
         "format",
         "json"
     );
 
+
     url.searchParams.set(
         "limit",
         String(DATA_LIMIT)
     );
+
 
     url.searchParams.set(
         "offset",
@@ -409,103 +682,295 @@ async function fetchDataGovRecords() {
     );
 
 
-    console.log(
-        "Downloading fresh mandi data from data.gov.in..."
-    );
+    let lastError = null;
 
 
-    const response =
-        await fetch(
-            url.toString(),
-            {
-                method: "GET",
-                headers: {
-                    "Accept":
-                        "application/json"
-                }
-            }
+    for (
+        let attempt = 1;
+        attempt <= MAX_FETCH_ATTEMPTS;
+        attempt++
+    ) {
+
+        console.log(
+            `Downloading fresh mandi data from data.gov.in (attempt ${attempt}/${MAX_FETCH_ATTEMPTS})...`
         );
 
 
-    if (!response.ok) {
+        const controller =
+            new AbortController();
 
-        const text =
-            await response.text();
 
-        if (response.status === 429) {
-
-            throw new Error(
-                "data.gov.in HTTP 429: Rate limit exceeded. " +
-                "Please wait a few minutes before requesting fresh data again."
+        const timeout =
+            setTimeout(
+                () =>
+                    controller.abort(),
+                FETCH_TIMEOUT_MS
             );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url.toString(),
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Accept":
+                                "application/json",
+
+                            "User-Agent":
+                                "FarmLink-Mandi-Price-Server/1.0"
+                        },
+
+                        signal:
+                            controller.signal
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                if (
+                    response.status === 401
+                ) {
+
+                    throw new Error(
+                        `data.gov.in HTTP 401: API key is invalid or missing. ${text}`
+                    );
+                }
+
+
+                if (
+                    response.status === 403
+                ) {
+
+                    throw new Error(
+                        `data.gov.in HTTP 403: API key is not authorised for this resource. ${text}`
+                    );
+                }
+
+
+                if (
+                    response.status === 429
+                ) {
+
+                    throw new Error(
+                        "data.gov.in HTTP 429: Rate limit exceeded."
+                    );
+                }
+
+
+                if (
+                    response.status >= 500
+                ) {
+
+                    throw new Error(
+                        `data.gov.in HTTP ${response.status}: upstream server error. ${text}`
+                    );
+                }
+
+
+                throw new Error(
+                    `data.gov.in HTTP ${response.status}: ${text}`
+                );
+            }
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    JSON.parse(text);
+
+            } catch {
+
+                throw new Error(
+                    "data.gov.in returned a non-JSON response."
+                );
+            }
+
+
+            console.log(
+                "data.gov.in response keys:",
+                Object.keys(data)
+            );
+
+
+            console.log(
+                "data.gov.in status:",
+                data.status
+            );
+
+
+            console.log(
+                "data.gov.in total:",
+                data.total
+            );
+
+
+            console.log(
+                "data.gov.in records:",
+                Array.isArray(data.records)
+                    ? data.records.length
+                    : "NOT AN ARRAY"
+            );
+
+
+            if (
+                data.status &&
+                data.status !== "ok"
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "data.gov.in returned an error."
+                );
+            }
+
+
+            if (
+                !Array.isArray(
+                    data.records
+                )
+            ) {
+
+                throw new Error(
+                    "data.gov.in response does not contain a valid records array."
+                );
+            }
+
+
+            const rawRecords =
+                data.records;
+
+
+            const records =
+                rawRecords.map(
+                    normalizeRecord
+                );
+
+
+            if (
+                records.length === 0
+            ) {
+
+                throw new Error(
+                    "data.gov.in returned zero mandi records."
+                );
+            }
+
+
+            console.log(
+                `Downloaded ${records.length} mandi records.`
+            );
+
+
+            return {
+
+                records,
+
+                total:
+                    Number(data.total) ||
+                    records.length,
+
+                title:
+                    data.title ||
+                    "Current Daily Mandi Prices"
+            };
+
+
+        } catch (error) {
+
+            lastError =
+                error;
+
+
+            const message =
+                clean(
+                    error &&
+                    error.message
+                );
+
+
+            /*
+             * Do not retry authorization errors.
+             */
+            const permanentError =
+                message.includes(
+                    "HTTP 401"
+                ) ||
+
+                message.includes(
+                    "HTTP 403"
+                ) ||
+
+                message.includes(
+                    "API key"
+                ) ||
+
+                message.includes(
+                    "zero mandi records"
+                ) ||
+
+                message.includes(
+                    "valid records array"
+                );
+
+
+            if (
+                permanentError ||
+                attempt === MAX_FETCH_ATTEMPTS
+            ) {
+
+                break;
+            }
+
+
+            console.warn(
+                `data.gov.in request failed: ${message}`
+            );
+
+
+            const delay =
+                RETRY_DELAYS_MS[
+                    Math.min(
+                        attempt - 1,
+                        RETRY_DELAYS_MS.length - 1
+                    )
+                ];
+
+
+            console.warn(
+                `Retrying data.gov.in in ${delay / 1000} seconds...`
+            );
+
+
+            await sleep(delay);
+
+
+        } finally {
+
+            clearTimeout(timeout);
         }
-
-        throw new Error(
-            `data.gov.in HTTP ${response.status}: ${text}`
-        );
     }
 
 
-   const data = await response.json();
-
-    console.log(
-        "data.gov.in response keys:",
-        Object.keys(data)
+    throw (
+        lastError ||
+        new Error(
+            "Unable to download mandi data from data.gov.in."
+        )
     );
-
-    console.log(
-        "data.gov.in status:",
-        data.status
-    );
-
-    console.log(
-        "data.gov.in total:",
-        data.total
-    );
-
-    console.log(
-        "data.gov.in records:",
-        Array.isArray(data.records)
-            ? data.records.length
-            : "NOT AN ARRAY"
-    );
-
-    if (data.status && data.status !== "ok") {
-        throw new Error(
-            data.message ||
-            "data.gov.in returned an error."
-        );
-    }
-
-    if (!Array.isArray(data.records)) {
-        throw new Error(
-            "data.gov.in response does not contain a valid records array."
-        );
-    }
-
-    const rawRecords = data.records;
-
-    const records = rawRecords.map(
-        normalizeRecord
-    );
-
-    console.log(
-        `Downloaded ${records.length} mandi records.`
-    );
-
-    return {
-        records: records,
-
-        total:
-            Number(data.total) ||
-            records.length,
-
-        title:
-            data.title ||
-            "Current Daily Mandi Prices"
-    };
-
 }
+
 
 /* ============================================================
    CACHE
@@ -514,9 +979,13 @@ async function fetchDataGovRecords() {
 function cacheIsFresh() {
 
     return (
+
         mandiCache.records.length > 0 &&
-        (Date.now() - mandiCache.fetchedAt) <
-        CACHE_TTL_MS
+
+        (
+            Date.now() -
+            mandiCache.fetchedAt
+        ) < CACHE_TTL_MS
     );
 }
 
@@ -526,31 +995,55 @@ async function getMandiData() {
     /*
      * 1. Use fresh cache.
      */
-    if (cacheIsFresh()) {
+
+    if (
+        cacheIsFresh()
+    ) {
 
         return {
-            records: mandiCache.records,
-            total: mandiCache.total,
-            title: mandiCache.title,
-            fromCache: true
+
+            records:
+                mandiCache.records,
+
+            total:
+                mandiCache.total,
+
+            title:
+                mandiCache.title,
+
+            fromCache:
+                true,
+
+            stale:
+                false,
+
+            fetchedAt:
+                mandiCache.fetchedAt
         };
     }
 
 
     /*
-     * 2. If another request is already downloading data,
-     *    wait for that request instead of creating another
-     *    data.gov.in request.
+     * 2. If another request is already downloading,
+     *    wait for it.
      */
-    if (mandiCache.loadingPromise) {
 
-        return await mandiCache.loadingPromise;
+    if (
+        mandiCache.loadingPromise
+    ) {
+
+        return await
+            mandiCache.loadingPromise;
     }
 
 
     /*
-     * 3. Download once.
+     * 3. Try fresh download.
+     *
+     * If it fails and old data exists,
+     * continue serving old data.
      */
+
     mandiCache.loadingPromise =
         (async () => {
 
@@ -563,22 +1056,105 @@ async function getMandiData() {
                 mandiCache.records =
                     data.records;
 
+
                 mandiCache.total =
                     data.total;
 
+
                 mandiCache.title =
                     data.title;
+
 
                 mandiCache.fetchedAt =
                     Date.now();
 
 
+                /*
+                 * Save ONLY successful data.
+                 */
+
+                savePersistentCache();
+
+
                 return {
-                    records: mandiCache.records,
-                    total: mandiCache.total,
-                    title: mandiCache.title,
-                    fromCache: false
+
+                    records:
+                        mandiCache.records,
+
+                    total:
+                        mandiCache.total,
+
+                    title:
+                        mandiCache.title,
+
+                    fromCache:
+                        false,
+
+                    stale:
+                        false,
+
+                    fetchedAt:
+                        mandiCache.fetchedAt
                 };
+
+
+            } catch (error) {
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * Never throw away good old data
+                 * because of a temporary API failure.
+                 */
+
+                if (
+                    hasAnyCachedData()
+                ) {
+
+                    console.warn(
+                        "Fresh mandi download failed:",
+                        error.message
+                    );
+
+
+                    console.warn(
+                        "Serving the last successful mandi cache instead."
+                    );
+
+
+                    return {
+
+                        records:
+                            mandiCache.records,
+
+                        total:
+                            mandiCache.total,
+
+                        title:
+                            mandiCache.title,
+
+                        fromCache:
+                            true,
+
+                        stale:
+                            true,
+
+                        fetchedAt:
+                            mandiCache.fetchedAt,
+
+                        refreshError:
+                            error.message
+                    };
+                }
+
+
+                /*
+                 * No old data exists.
+                 * The error must be returned.
+                 */
+
+                throw error;
+
 
             } finally {
 
@@ -589,7 +1165,8 @@ async function getMandiData() {
         })();
 
 
-    return await mandiCache.loadingPromise;
+    return await
+        mandiCache.loadingPromise;
 }
 
 
@@ -612,6 +1189,7 @@ function filterRecords(
                     filters.state
                 )
             ) {
+
                 return false;
             }
 
@@ -623,6 +1201,7 @@ function filterRecords(
                     filters.district
                 )
             ) {
+
                 return false;
             }
 
@@ -634,6 +1213,7 @@ function filterRecords(
                     filters.market
                 )
             ) {
+
                 return false;
             }
 
@@ -645,6 +1225,7 @@ function filterRecords(
                     filters.commodityGroup
                 )
             ) {
+
                 return false;
             }
 
@@ -656,6 +1237,7 @@ function filterRecords(
                     filters.commodity
                 )
             ) {
+
                 return false;
             }
 
@@ -667,6 +1249,7 @@ function filterRecords(
                     filters.variety
                 )
             ) {
+
                 return false;
             }
 
@@ -678,6 +1261,7 @@ function filterRecords(
                     filters.grade
                 )
             ) {
+
                 return false;
             }
 
@@ -689,6 +1273,7 @@ function filterRecords(
                     filters.date
                 )
             ) {
+
                 return false;
             }
 
@@ -708,21 +1293,27 @@ function uniqueValues(
 ) {
 
     return [
+
         ...new Set(
+
             records
                 .map(
                     record =>
-                        clean(record[field])
+                        clean(
+                            record[field]
+                        )
                 )
                 .filter(Boolean)
         )
+
     ].sort(
         (a, b) =>
             a.localeCompare(
                 b,
                 "en",
                 {
-                    sensitivity: "base"
+                    sensitivity:
+                        "base"
                 }
             )
     );
@@ -733,11 +1324,14 @@ function uniqueValues(
    DATE PARSER
    ============================================================ */
 
-function parseMandiDate(value) {
+function parseMandiDate(
+    value
+) {
 
     if (!value) {
         return 0;
     }
+
 
     const text =
         String(value).trim();
@@ -757,8 +1351,11 @@ function parseMandiDate(value) {
     if (match) {
 
         return Date.UTC(
+
             Number(match[3]),
+
             Number(match[2]) - 1,
+
             Number(match[1])
         );
     }
@@ -777,8 +1374,11 @@ function parseMandiDate(value) {
     if (match) {
 
         return Date.UTC(
+
             Number(match[1]),
+
             Number(match[2]) - 1,
+
             Number(match[3])
         );
     }
@@ -798,7 +1398,9 @@ function parseMandiDate(value) {
    FILTER OBJECT
    ============================================================ */
 
-function readFilters(requestUrl) {
+function readFilters(
+    requestUrl
+) {
 
     return {
 
@@ -873,13 +1475,10 @@ async function handleOptions(
     try {
 
         const filters =
-            readFilters(requestUrl);
+            readFilters(
+                requestUrl
+            );
 
-
-        /*
-         * This now normally results in ZERO additional
-         * data.gov.in requests because the data is cached.
-         */
 
         const data =
             await getMandiData();
@@ -966,23 +1565,35 @@ async function handleOptions(
                     records.length,
 
                 fromCache:
-                    data.fromCache
+                    data.fromCache,
+
+                stale:
+                    data.stale || false,
+
+                fetchedAt:
+                    data.fetchedAt || null,
+
+                refreshError:
+                    data.refreshError || null
             }
         );
+
 
     } catch (error) {
 
         console.error(
-            "OPTIONS ERROR:",
+            "OPTIONS DATA ERROR:",
             error.message
         );
 
 
         sendJson(
             response,
+
             error.message.includes("429")
                 ? 429
                 : 500,
+
             {
                 error:
                     error.message
@@ -1004,14 +1615,10 @@ async function handlePrices(
     try {
 
         const filters =
-            readFilters(requestUrl);
+            readFilters(
+                requestUrl
+            );
 
-
-        /*
-         * Uses cached data.
-         *
-         * No new data.gov.in request if cache is fresh.
-         */
 
         const data =
             await getMandiData();
@@ -1103,9 +1710,19 @@ async function handlePrices(
                     data.title,
 
                 fromCache:
-                    data.fromCache
+                    data.fromCache,
+
+                stale:
+                    data.stale || false,
+
+                fetchedAt:
+                    data.fetchedAt || null,
+
+                refreshError:
+                    data.refreshError || null
             }
         );
+
 
     } catch (error) {
 
@@ -1117,9 +1734,11 @@ async function handlePrices(
 
         sendJson(
             response,
+
             error.message.includes("429")
                 ? 429
                 : 500,
+
             {
                 error:
                     error.message
@@ -1168,10 +1787,22 @@ function handleCache(
             cacheFresh:
                 cacheIsFresh(),
 
+            cacheStale:
+                hasAnyCachedData() &&
+                !cacheIsFresh(),
+
             cacheTTLSeconds:
                 Math.round(
-                    CACHE_TTL_MS / 1000
+                    CACHE_TTL_MS /
+                    1000
                 ),
+
+            fetchedAt:
+                mandiCache.fetchedAt
+                    ? new Date(
+                        mandiCache.fetchedAt
+                    ).toISOString()
+                    : null,
 
             loading:
                 Boolean(
@@ -1186,22 +1817,18 @@ function handleCache(
    GET /api/refresh
    ============================================================ */
 
-/*
- * This endpoint manually clears the cache.
- *
- * We keep it available for development/testing.
- *
- * IMPORTANT:
- * Do not repeatedly call this endpoint.
- */
-
 function handleRefresh(
     response
 ) {
 
-    mandiCache.records = [];
-    mandiCache.total = 0;
-    mandiCache.title = "";
+    /*
+     * Force expiry without deleting the last
+     * successful data.
+     *
+     * If the next API request fails,
+     * old data remains available.
+     */
+
     mandiCache.fetchedAt = 0;
 
 
@@ -1209,9 +1836,11 @@ function handleRefresh(
         response,
         200,
         {
+
             ok: true,
+
             message:
-                "Mandi cache cleared. The next API request will download fresh data."
+                "Mandi cache marked stale. The next API request will try a fresh download; if data.gov.in fails, the previous successful data remains available."
         }
     );
 }
@@ -1268,18 +1897,15 @@ function serveStatic(
 
     /*
      * Home page.
-     *
-     * If your actual file is main(2).html,
-     * change the next line to:
-     *
-     * pathname = "/main(2).html";
      */
 
-            if (
+    if (
         pathname === "/" ||
         pathname === ""
     ) {
-        pathname = "/index.html";
+
+        pathname =
+            "/index.html";
     }
 
 
@@ -1299,6 +1925,50 @@ function serveStatic(
             __dirname,
             pathname
         );
+
+
+    /*
+     * Never expose secrets,
+     * cache files, or server source.
+     */
+
+    const protectedFiles = [
+
+        ".env",
+
+        "mandi-cache.json",
+
+        "server.js",
+
+        "ser_ver(1).js",
+
+        "ser_ver(2).js"
+
+    ];
+
+
+    const requestedBaseName =
+        path.basename(
+            filePath
+        ).toLowerCase();
+
+
+    if (
+        protectedFiles.some(
+            file =>
+                requestedBaseName ===
+                file.toLowerCase()
+        )
+    ) {
+
+        sendText(
+            response,
+            403,
+            "Forbidden"
+        );
+
+        return;
+    }
 
 
     fs.stat(
@@ -1385,7 +2055,12 @@ const server =
 
 
                 /*
-                 * CORS preflight
+                 * CORS preflight.
+                 *
+                 * This is only for requests coming
+                 * to FarmLink's own server.
+                 *
+                 * It does NOT send OPTIONS to data.gov.in.
                  */
 
                 if (
@@ -1396,6 +2071,7 @@ const server =
                     response.writeHead(
                         204,
                         {
+
                             "Access-Control-Allow-Origin":
                                 "*",
 
@@ -1406,6 +2082,7 @@ const server =
                                 "Content-Type"
                         }
                     );
+
 
                     response.end();
 
@@ -1498,19 +2175,37 @@ const server =
 
                             cache:
                                 {
+
                                     records:
-                                        mandiCache.records.length,
+                                        mandiCache
+                                            .records
+                                            .length,
 
                                     fresh:
                                         cacheIsFresh(),
 
+                                    stale:
+                                        hasAnyCachedData() &&
+                                        !cacheIsFresh(),
+
                                     loading:
                                         Boolean(
-                                            mandiCache.loadingPromise
-                                        )
+                                            mandiCache
+                                                .loadingPromise
+                                        ),
+
+                                    fetchedAt:
+                                        mandiCache
+                                            .fetchedAt
+                                            ? new Date(
+                                                mandiCache
+                                                    .fetchedAt
+                                            ).toISOString()
+                                            : null
                                 }
                         }
                     );
+
 
                     return;
                 }
@@ -1534,7 +2229,7 @@ const server =
 
 
                 /*
-                 * MANUAL CACHE CLEAR
+                 * MANUAL REFRESH
                  */
 
                 if (
@@ -1560,6 +2255,7 @@ const server =
                     response
                 );
 
+
             } catch (error) {
 
                 console.error(
@@ -1579,6 +2275,17 @@ const server =
             }
         }
     );
+
+
+/* ============================================================
+   STARTUP CACHE LOAD
+   ============================================================ */
+
+/*
+ * Load the last successful dataset before
+ * accepting requests.
+ */
+loadPersistentCache();
 
 
 /* ============================================================
@@ -1624,10 +2331,25 @@ server.listen(
         );
 
         console.log(
+            ` Persistent cache: ${
+                fs.existsSync(CACHE_FILE)
+                    ? "Available"
+                    : "Not created yet"
+            }`
+        );
+
+        console.log(
+            " Retry protection: 3 attempts"
+        );
+
+        console.log(
+            " Stale-cache fallback: Enabled"
+        );
+
+        console.log(
             "======================================"
         );
 
         console.log("");
-
     }
 );
