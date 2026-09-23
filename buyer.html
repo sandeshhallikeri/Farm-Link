@@ -7,8 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>FarmLink - Buyer</title>
+    <script src="marketData.js"></script>
 
     <style>
+        .home-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: white;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.home-button:hover {
+    background-color: #2e7d32;
+    color: white;
+}
 
         body {
             font-family: Arial, sans-serif;
@@ -175,6 +191,71 @@
         .respond-button:hover {
             background-color: #0d47a1;
         }
+        /* FARMER CROP LISTING */
+
+.farmer-listing-card {
+    background-color: white;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.farmer-listing-card h3 {
+    color: #2e7d32;
+    margin-top: 0;
+}
+
+.crop-photo {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.make-offer-button {
+    background-color: #2e7d32;
+    margin-top: 15px;
+}
+
+.make-offer-button:hover {
+    background-color: #1b5e20;
+}
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.header-top nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.header-top nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.header-top nav a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.header-top h1 {
+    margin-bottom: 5px;
+}
+
+.header-top p {
+    margin-top: 0;
+}
 
     </style>
 
@@ -184,22 +265,23 @@
 <body>
 
 
-<header style="position:relative;">
-    <h1>FarmLink</h1>
-    <p>Buyer Marketplace</p>
+<header>
 
-    <a href="index.html" 
-       style="display:inline-block;
-              margin-top:12px;
-              padding:8px 18px;
-              background-color:white;
-              color:#2e7d32;
-              font-weight:bold;
-              border-radius:6px;
-              text-decoration:none;
-              box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-        🏠 Home
-    </a>
+    <div class="header-top">
+        <div>
+            <h1>FarmLink</h1>
+            <p>Direct Market Linkage & Price Discovery</p>
+        </div>
+
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="farmer.html">🌱 Farmer</a>
+            <a href="buyer.html">🏪 Buyer</a>
+            <a href="transporter.html">🚚 Transporter</a>
+            <a href="login.html">🔐 Login</a>
+        </nav>
+    </div>
+
 </header>
 
 
@@ -320,7 +402,19 @@
     </select>
 
 
- 
+    <!-- PRICE -->
+
+    <label for="price">
+        Offer Price (₹ per kg)
+    </label>
+
+    <input
+        type="number"
+        id="price"
+        placeholder="Example: 35"
+        min="0.01"
+        step="0.01"
+    >
 
 
     <!-- LOCATION -->
@@ -444,8 +538,175 @@
     <div id="myOffers"></div>
 
 </div>
+<!-- FARMER CROP LISTINGS -->
+
+<div class="offers-section">
+
+    <h2>🌾 Available Farmer Crops</h2>
+
+    <div id="farmerListings"></div>
+
+</div>
+
+<!-- TRANSPORTATION MODULE -->
+
+<div class="offers-section">
+
+    <h2>🚚 Transportation & Delivery</h2>
+
+    <div class="offer-card">
+
+        <label for="buyerTransportCrop">
+            Crop
+        </label>
+
+        <select id="buyerTransportCrop">
+            <option value="Tomato">Tomato</option>
+            <option value="Onion">Onion</option>
+            <option value="Potato">Potato</option>
+            <option value="Brinjal">Brinjal</option>
+            <option value="Cabbage">Cabbage</option>
+        </select>
 
 
+        <label for="buyerTransportQuantity">
+            Quantity (kg)
+        </label>
+
+        <input
+            type="number"
+            id="buyerTransportQuantity"
+            min="1"
+            placeholder="Example: 100"
+        >
+
+
+        <label for="buyerPickupLocation">
+            Pickup Location
+        </label>
+
+        <select id="buyerPickupLocation">
+
+            <option value="">
+                -- Select Pickup Location --
+            </option>
+
+            <option value="Kolar">
+                Kolar
+            </option>
+
+            <option value="Bengaluru">
+                Bengaluru
+            </option>
+
+            <option value="Mysuru">
+                Mysuru
+            </option>
+
+            <option value="Tumakuru">
+                Tumakuru
+            </option>
+
+            <option value="Chikkaballapur">
+                Chikkaballapur
+            </option>
+
+            <option value="Ramanagara">
+                Ramanagara
+            </option>
+
+        </select>
+
+
+        <label for="buyerDeliveryLocation">
+            Delivery Location
+        </label>
+
+        <select id="buyerDeliveryLocation">
+
+            <option value="">
+                -- Select Delivery Location --
+            </option>
+
+            <option value="Bengaluru">
+                Bengaluru
+            </option>
+
+            <option value="Kolar">
+                Kolar
+            </option>
+
+            <option value="Mysuru">
+                Mysuru
+            </option>
+
+            <option value="Tumakuru">
+                Tumakuru
+            </option>
+
+            <option value="Chikkaballapur">
+                Chikkaballapur
+            </option>
+
+            <option value="Ramanagara">
+                Ramanagara
+            </option>
+
+        </select>
+
+
+        <label for="buyerTransporterSelect">
+            Select Transporter
+        </label>
+
+        <select
+            id="buyerTransporterSelect"
+            onchange="onBuyerTransporterChange()"
+        >
+        </select>
+
+
+        <div id="buyerTransporterInfo"></div>
+
+
+        <label for="buyerTransportDistance">
+            Distance (km)
+        </label>
+
+        <input
+            type="number"
+            id="buyerTransportDistance"
+            min="1"
+            placeholder="Example: 65"
+            oninput="calculateBuyerTransport()"
+        >
+
+
+        <div id="buyerTransportCost"
+             class="status pending">
+            🚚 Transport Cost: ₹0
+        </div>
+
+
+        <button onclick="bookBuyerTransport()">
+            🚚 Book Now
+        </button>
+
+
+        <div id="buyerBookingResult"></div>
+
+    </div>
+    <!-- MY TRANSPORT BOOKINGS -->
+
+<div class="offers-section">
+
+    <h2>📦 My Transport Bookings</h2>
+
+    <div id="buyerTransportBookings"></div>
+
+</div>
+
+</div>
 <script>
 
 
@@ -594,11 +855,14 @@ function postRequirement() {
 
     const offer = {
 
-        id: String(Date.now()),
+    id: String(Date.now()),
 
-        businessName: businessName,
+    businessName: businessName,
 
-        buyerLocation: location,
+    buyerMobile:
+        JSON.parse(localStorage.getItem("farmlinkUser"))?.mobile || "",
+
+    buyerLocation: location,
 
         crop: crop,
 
@@ -902,6 +1166,25 @@ function loadMyOffers() {
         /* =================================================
            CREATE OFFER CARD
            ================================================= */
+           let priceLabel = "Your Offer";
+let displayPrice = offer.price;
+
+if (offer.status === "accepted") {
+
+    priceLabel = "Final Agreed Price";
+
+    if (
+        offer.negotiationHistory &&
+        offer.negotiationHistory.length > 0
+    ) {
+        const latestNegotiation =
+            offer.negotiationHistory[
+                offer.negotiationHistory.length - 1
+            ];
+
+        displayPrice = latestNegotiation.price;
+    }
+}
 
         card.innerHTML = `
 
@@ -909,10 +1192,10 @@ function loadMyOffers() {
                 🌾 ${offer.crop}
             </h3>
 
-            <p>
-                ⚖️ <strong>Quantity:</strong>
-                ${offer.quantity} kg
-            </p>
+           <p>
+    💰 <strong>${priceLabel}:</strong>
+    ₹${displayPrice}/kg
+</p>
 
             <p>
                 ⭐ <strong>Quality:</strong>
@@ -1045,9 +1328,30 @@ function loadMyOffers() {
             );
 
         }
+        /* =================================================
+           REMOVE OFFER BUTTON
+           ================================================= */
+
+        const removeButton = document.createElement("button");
+
+        removeButton.className = "remove-button";
+
+        removeButton.textContent = "🗑️ Remove Offer";
+
+        removeButton.onclick = function() {
+            removeBuyerOffer(offer.id);
+        };
+
+        card.appendChild(removeButton);
+
+
+        /* =================================================
+           ADD OFFER CARD TO PAGE
+           ================================================= */
+
+        container.appendChild(card);
 
     });
-
 
 }
 
@@ -1128,7 +1432,970 @@ function removeBuyerOffer(offerId) {
    ===================================================== */
 
 loadMyOffers();
+loadFarmerListings();
+loadBuyerTransporters();
+loadBuyerTransportBookings();
+function makeOfferToFarmer(listingId) {
 
+    const listings =
+        JSON.parse(
+            localStorage.getItem("farmerListings")
+        ) || [];
+
+    const listing =
+        listings.find(function(item) {
+            return String(item.id) === String(listingId);
+        });
+
+    if (!listing) {
+
+        alert("Farmer crop listing not found.");
+
+        return;
+    }
+
+
+    const offerPrice =
+        prompt(
+            "Enter your offer price per kg for " +
+            listing.crop +
+            ":"
+        );
+
+
+    if (offerPrice === null) {
+        return;
+    }
+
+
+    if (
+        offerPrice.trim() === "" ||
+        Number(offerPrice) <= 0
+    ) {
+
+        alert("Please enter a valid offer price.");
+
+        return;
+    }
+
+
+    const quantity =
+        prompt(
+            "Enter the quantity you want (kg):"
+        );
+
+
+    if (quantity === null) {
+        return;
+    }
+
+
+    if (
+        quantity.trim() === "" ||
+        Number(quantity) <= 0
+    ) {
+
+        alert("Please enter a valid quantity.");
+
+        return;
+    }
+
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+
+       const newOffer = {
+
+    id: String(Date.now()),
+
+    businessName:
+        currentUser.name || "Buyer",
+
+    buyerMobile:
+        currentUser.mobile || "",
+
+    buyerLocation:
+        currentUser.location || "",
+
+        farmerName:
+            listing.farmerName,
+
+        farmerLocation:
+            listing.farmerLocation,
+
+        listingId:
+            listing.id,
+
+        crop:
+            listing.crop,
+
+        quantity:
+            Number(quantity),
+
+        quality:
+            "As per photo",
+
+        price:
+            Number(offerPrice),
+
+        requiredDate:
+            "",
+
+        status:
+            "pending",
+
+        responsePrice:
+            null,
+
+        responseBy:
+            null,
+
+        negotiationHistory: [
+
+            {
+                by: "buyer",
+
+                price:
+                    Number(offerPrice)
+            }
+
+        ]
+
+    };
+
+
+    let offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    offers.push(newOffer);
+
+
+    localStorage.setItem(
+        "farmlinkOffers",
+        JSON.stringify(offers)
+    );
+
+
+    alert(
+        "✅ Your offer has been sent to the farmer!"
+    );
+
+
+    loadMyOffers();
+}
+/* =====================================================
+   LOAD FARMER CROP LISTINGS
+   ===================================================== */
+
+function loadFarmerListings() {
+
+    const container =
+        document.getElementById("farmerListings");
+
+    const listings =
+        JSON.parse(
+            localStorage.getItem("farmerListings")
+        ) || [];
+
+
+    /* -----------------------------------------------
+       GET FARMER LISTINGS REMOVED BY THIS BUYER
+    ----------------------------------------------- */
+
+    const removedListings =
+        JSON.parse(
+            localStorage.getItem("buyerRemovedListings")
+        ) || [];
+
+
+    const removedIds =
+        removedListings.map(function(id) {
+
+            return String(id);
+
+        });
+
+
+    /* -----------------------------------------------
+       SHOW ONLY AVAILABLE AND NOT REMOVED LISTINGS
+    ----------------------------------------------- */
+
+    const availableListings =
+        listings.filter(function(listing) {
+
+            return (
+                listing.status === "available" &&
+                !removedIds.includes(
+                    String(listing.id)
+                )
+            );
+
+        });
+
+
+    /* -----------------------------------------------
+       NO AVAILABLE CROPS
+    ----------------------------------------------- */
+
+    if (availableListings.length === 0) {
+
+        container.innerHTML =
+            "<p>No farmer crop listings are available yet.</p>";
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------
+       CLEAR OLD LISTINGS
+    ----------------------------------------------- */
+
+    container.innerHTML = "";
+
+
+    /* -----------------------------------------------
+       DISPLAY FARMER CROPS
+    ----------------------------------------------- */
+
+    availableListings.forEach(function(listing) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "farmer-listing-card";
+
+
+        card.innerHTML = `
+
+            <h3>
+                🌾 ${listing.crop}
+            </h3>
+
+            <p>
+    👨‍🌾 <strong>Farmer:</strong>
+    ${listing.farmerName}
+</p>
+
+<p>
+    📞 <strong>Farmer Phone:</strong>
+    ${listing.farmerMobile || "Not provided"}
+</p>
+
+<p>
+    📦 <strong>Quantity Available:</strong>
+    ${listing.quantity} kg
+</p>
+
+            <p>
+                📍 <strong>Location:</strong>
+                ${listing.farmerLocation}
+            </p>
+
+            <img
+                src="${listing.photo}"
+                class="crop-photo"
+                alt="Farmer Crop Photo"
+            >
+
+            <p class="note">
+                📷 This photo was uploaded by the farmer
+                for buyers to visually inspect the crop.
+            </p>
+
+        `;
+
+
+        /* -------------------------------------------
+           MAKE OFFER BUTTON
+        ------------------------------------------- */
+
+        const makeOfferButton =
+            document.createElement("button");
+
+        makeOfferButton.className =
+            "make-offer-button";
+
+        makeOfferButton.textContent =
+            "💰 Make an Offer";
+
+        makeOfferButton.onclick =
+            function() {
+
+                makeOfferToFarmer(
+                    listing.id
+                );
+
+            };
+
+
+        card.appendChild(
+            makeOfferButton
+        );
+
+
+        /* -------------------------------------------
+           REMOVE LISTING BUTTON
+        ------------------------------------------- */
+
+        const removeButton =
+            document.createElement("button");
+
+        removeButton.className =
+            "remove-offer-button";
+
+        removeButton.textContent =
+            "🗑️ Remove";
+
+        removeButton.onclick =
+            function() {
+
+                removeFarmerListing(
+                    listing.id
+                );
+
+            };
+
+
+        card.appendChild(
+            removeButton
+        );
+
+
+        container.appendChild(card);
+
+    });
+
+}
+function removeFarmerListing(listingId) {
+
+    const confirmation =
+        confirm(
+            "Remove this crop from your Available Farmer Crops?"
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+    let removedListings =
+        JSON.parse(
+            localStorage.getItem(
+                "buyerRemovedListings"
+            )
+        ) || [];
+
+
+    listingId =
+        String(listingId);
+
+
+    if (
+        !removedListings
+            .map(String)
+            .includes(listingId)
+    ) {
+
+        removedListings.push(
+            listingId
+        );
+
+    }
+
+
+    localStorage.setItem(
+        "buyerRemovedListings",
+        JSON.stringify(
+            removedListings
+        )
+    );
+
+
+    loadFarmerListings();
+
+}
+/* =====================================================
+   BUYER TRANSPORTATION MODULE
+   ===================================================== */
+
+function loadBuyerTransporters() {
+
+    const select =
+        document.getElementById("buyerTransporterSelect");
+
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    const transporters =
+        typeof getTransporters === "function"
+            ? getTransporters()
+            : [];
+
+    if (transporters.length === 0) {
+
+        const option =
+            document.createElement("option");
+
+        option.textContent =
+            "No transporters available";
+
+        select.appendChild(option);
+
+        return;
+    }
+
+    transporters.forEach(function(transporter) {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            transporter.id;
+
+        option.textContent =
+            `${transporter.name} (${transporter.vehicle}) • ₹${transporter.ratePerKm}/km [${transporter.location}]`;
+
+        select.appendChild(option);
+
+    });
+
+    onBuyerTransporterChange();
+}
+
+
+/* =====================================================
+   SHOW SELECTED TRANSPORTER
+   ===================================================== */
+
+function onBuyerTransporterChange() {
+
+    const select =
+        document.getElementById(
+            "buyerTransporterSelect"
+        );
+
+    if (!select) return;
+
+    const transporter =
+        typeof getTransporterById === "function"
+            ? getTransporterById(select.value)
+            : null;
+
+    const info =
+        document.getElementById(
+            "buyerTransporterInfo"
+        );
+
+    if (!info || !transporter) return;
+
+    info.innerHTML = `
+        <div class="status accepted">
+
+            🚚 <strong>${transporter.name}</strong>
+
+            <p>
+                🚛 Vehicle:
+                ${transporter.vehicle}
+            </p>
+
+            <p>
+                📦 Capacity:
+                ${transporter.capacity} kg
+            </p>
+
+            <p>
+                📍 Location:
+                ${transporter.location}
+            </p>
+
+            <p>
+                💰 Rate:
+                ₹${transporter.ratePerKm}/km
+            </p>
+
+            <p>
+                📞 Contact:
+                ${transporter.contact}
+            </p>
+
+        </div>
+    `;
+
+    calculateBuyerTransport();
+}
+
+
+/* =====================================================
+   CALCULATE TRANSPORT COST
+   ===================================================== */
+
+function calculateBuyerTransport() {
+
+    const distance =
+        Number(
+            document.getElementById(
+                "buyerTransportDistance"
+            ).value
+        );
+
+    const select =
+        document.getElementById(
+            "buyerTransporterSelect"
+        );
+
+    const transporter =
+        typeof getTransporterById === "function"
+            ? getTransporterById(select.value)
+            : null;
+
+    const costBox =
+        document.getElementById(
+            "buyerTransportCost"
+        );
+
+    if (!costBox) return;
+
+    if (!transporter || !distance || distance <= 0) {
+
+        costBox.textContent =
+            "🚚 Transport Cost: ₹0";
+
+        return;
+    }
+
+    const cost =
+        distance * Number(
+            transporter.ratePerKm
+        );
+
+    costBox.textContent =
+        "🚚 Estimated Transport Cost: ₹" +
+        cost.toFixed(2);
+}
+
+
+/* =====================================================
+   BOOK TRANSPORT
+   ===================================================== */
+
+function bookBuyerTransport() {
+
+    const crop =
+        document.getElementById(
+            "buyerTransportCrop"
+        ).value;
+
+    const quantity =
+        Number(
+            document.getElementById(
+                "buyerTransportQuantity"
+            ).value
+        );
+
+    const pickup =
+        document.getElementById(
+            "buyerPickupLocation"
+        ).value;
+
+    const delivery =
+        document.getElementById(
+            "buyerDeliveryLocation"
+        ).value;
+
+    const distance =
+        Number(
+            document.getElementById(
+                "buyerTransportDistance"
+            ).value
+        );
+
+    const transporterSelect =
+        document.getElementById(
+            "buyerTransporterSelect"
+        );
+
+    const transporter =
+        typeof getTransporterById === "function"
+            ? getTransporterById(
+                transporterSelect.value
+            )
+            : null;
+
+
+    /* VALIDATION */
+
+    if (!quantity || quantity <= 0) {
+
+        alert(
+            "Please enter a valid quantity."
+        );
+
+        return;
+    }
+
+
+    if (pickup === "") {
+
+        alert(
+            "Please select the pickup location."
+        );
+
+        return;
+    }
+
+
+    if (delivery === "") {
+
+        alert(
+            "Please select the delivery location."
+        );
+
+        return;
+    }
+
+
+    if (pickup === delivery) {
+
+        alert(
+            "Pickup and delivery locations cannot be the same."
+        );
+
+        return;
+    }
+
+
+    if (!distance || distance <= 0) {
+
+        alert(
+            "Please enter a valid distance."
+        );
+
+        return;
+    }
+
+
+    if (!transporter) {
+
+        alert(
+            "Please select a transporter."
+        );
+
+        return;
+    }
+
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkUser"
+            )
+        ) || {};
+
+
+    const transportCost =
+        distance *
+        Number(transporter.ratePerKm);
+
+
+    const booking = {
+
+        bookingId:
+            "TR" +
+            Date.now(),
+                offerId:
+                  null,
+
+                farmerName:
+                   "",
+
+
+        transporterId:
+            transporter.id,
+
+        transporterName:
+            transporter.name,
+
+        vehicle:
+            transporter.vehicle,
+
+        contact:
+            transporter.contact,
+
+        buyerName:
+            currentUser.name || "Buyer",
+
+        crop:
+            crop,
+
+        quantity:
+            quantity,
+
+        pickupLocation:
+            pickup,
+
+        deliveryLocation:
+            delivery,
+
+        distance:
+            distance,
+
+        ratePerKm:
+            Number(transporter.ratePerKm),
+
+        transportCost:
+            transportCost,
+
+        status:
+            "booked",
+
+        bookedBy:
+            "buyer",
+
+        bookedAt:
+            new Date().toISOString()
+
+    };
+
+
+    let bookings =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkTransportBookings"
+            )
+        ) || [];
+
+
+    bookings.push(booking);
+
+
+    localStorage.setItem(
+        "farmlinkTransportBookings",
+        JSON.stringify(bookings)
+    );
+
+
+    document.getElementById(
+        "buyerBookingResult"
+    ).innerHTML = `
+
+        <div class="status accepted">
+
+            ✅ <strong>Transport Booked Successfully!</strong>
+
+            <p>
+                🆔 Booking ID:
+                ${booking.bookingId}
+            </p>
+
+            <p>
+                🚚 Transporter:
+                ${booking.transporterName}
+            </p>
+
+            <p>
+                🚛 Vehicle:
+                ${booking.vehicle}
+            </p>
+
+            <p>
+                📞 Contact:
+                ${booking.contact}
+            </p>
+
+            <p>
+                🌾 Crop:
+                ${booking.crop}
+            </p>
+
+            <p>
+                📦 Quantity:
+                ${booking.quantity} kg
+            </p>
+
+            <p>
+                📍 Pickup:
+                ${booking.pickupLocation}
+            </p>
+
+            <p>
+                📍 Delivery:
+                ${booking.deliveryLocation}
+            </p>
+
+            <p>
+                📏 Distance:
+                ${booking.distance} km
+            </p>
+
+            <p>
+                💰 Estimated Transport Cost:
+                ₹${booking.transportCost.toFixed(2)}
+            </p>
+
+            <p>
+                📌 Status:
+                <strong>Booked</strong>
+            </p>
+
+        </div>
+
+    `;
+
+    alert(
+        "🚚 Transport booked successfully!"
+    );
+
+}
+/* =====================================================
+   LOAD BUYER TRANSPORT BOOKINGS
+   ===================================================== */
+
+function loadBuyerTransportBookings() {
+
+    const container =
+        document.getElementById(
+            "buyerTransportBookings"
+        );
+
+    if (!container) return;
+
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkUser"
+            )
+        ) || {};
+
+
+    const bookings =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkTransportBookings"
+            )
+        ) || [];
+
+
+    const myBookings =
+        bookings.filter(function(booking) {
+
+            return (
+                booking.buyerName ===
+                (currentUser.name || "Buyer")
+            );
+
+        });
+
+
+    if (myBookings.length === 0) {
+
+        container.innerHTML =
+            "<p>No transport bookings yet.</p>";
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    myBookings.forEach(function(booking) {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "offer-card";
+
+
+        card.innerHTML = `
+
+            <h3>
+                🚚 Transport Booking
+            </h3>
+
+            <p>
+                🆔 <strong>Booking ID:</strong>
+                ${booking.bookingId}
+            </p>
+
+            <p>
+                🚚 <strong>Transporter:</strong>
+                ${booking.transporterName}
+            </p>
+
+            <p>
+                🚛 <strong>Vehicle:</strong>
+                ${booking.vehicle}
+            </p>
+
+            <p>
+                📞 <strong>Contact:</strong>
+                ${booking.contact}
+            </p>
+
+            <p>
+                🌾 <strong>Crop:</strong>
+                ${booking.crop}
+            </p>
+
+            <p>
+                📦 <strong>Quantity:</strong>
+                ${booking.quantity} kg
+            </p>
+
+            <p>
+                📍 <strong>Pickup:</strong>
+                ${booking.pickupLocation}
+            </p>
+
+            <p>
+                📍 <strong>Delivery:</strong>
+                ${booking.deliveryLocation}
+            </p>
+
+            <p>
+                📏 <strong>Distance:</strong>
+                ${booking.distance} km
+            </p>
+
+            <p>
+                💰 <strong>Transport Cost:</strong>
+                ₹${Number(
+                    booking.transportCost
+                ).toFixed(2)}
+            </p>
+
+            <p>
+                📌 <strong>Status:</strong>
+                ${booking.status}
+            </p>
+
+            <p>
+                👤 <strong>Booked By:</strong>
+                ${booking.bookedBy}
+            </p>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
 
 </script>
 
