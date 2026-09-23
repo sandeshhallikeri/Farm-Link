@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="UTF-8">
@@ -12,6 +11,21 @@
 
 
     <style>
+        .home-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: white;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.home-button:hover {
+    background-color: #2e7d32;
+    color: white;
+}
 
         body {
             font-family: Arial, sans-serif;
@@ -260,8 +274,383 @@
             color: #555;
 
         }
+        .recommendation-card {
+
+    background-color: white;
+
+    padding: 20px;
+
+    margin-top: 15px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+    border-left: 5px solid #2e7d32;
+
+}
+
+.recommendation-card h3 {
+
+    color: #2e7d32;
+
+    margin-top: 0;
+
+}
+
+.recommendation-card p {
+
+    margin: 10px 0;
+
+}
+
+        /* MARKET PRICE SECTION */
+        .market-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 25px auto;
+            width: 90%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        .market-section h2 {
+            color: #2e7d32;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .market-filter-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .market-filter-col {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .market-filter-col label {
+            margin-top: 0;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .market-price-card {
+            background: #f9fbf9;
+            border: 1px solid #c8e6c9;
+            border-left: 5px solid #2e7d32;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 18px;
+        }
+
+        .market-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .market-header h3 {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 17px;
+        }
+
+        .market-date {
+            font-size: 12px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 10px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .price-box {
+            background: white;
+            padding: 10px 6px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .price-box.modal {
+            background: #e8f5e9;
+            border: 2px solid #2e7d32;
+        }
+
+        .price-label {
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .price-value-kg {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 5px 0 2px;
+        }
+
+        .price-box.modal .price-value-kg {
+            font-size: 24px;
+            color: #1b5e20;
+        }
+
+        .price-value-quintal {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .market-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .market-source-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 12px;
+            border-top: 1px dashed #c8e6c9;
+            padding-top: 10px;
+            line-height: 1.4;
+        }
+
+        /* PRICE COMPARISON IN RECOMMENDATIONS */
+        .price-compare-card {
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .price-compare-row {
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .diff-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .diff-positive {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .diff-negative {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .diff-neutral {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+
+        .score-pill {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        /* TRANSPORTER & NET RETURN MODULE */
+        .transport-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            margin-top: 15px;
+        }
+
+        .transport-section h2 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .transport-inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .transport-inputs-grid label {
+            margin-top: 0;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .transporter-card {
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .transporter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .transporter-header h3 {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        .transporter-badge {
+            background: #2e7d32;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .transporter-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .net-return-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+        .net-return-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .gross-val {
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        .transport-val {
+            font-weight: bold;
+            color: #c62828;
+            font-size: 16px;
+        }
+
+        .net-return-row.total-row {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1b5e20;
+            margin-top: 6px;
+            padding-top: 4px;
+        }
+
+        .net-val {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .net-return-insight {
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #333;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.header-top nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.header-top nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.header-top nav a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.header-top h1 {
+    margin-bottom: 5px;
+}
+
+.header-top p {
+    margin-top: 0;
+}
 
     </style>
+
+    <script src="marketData.js"></script>
 
 </head>
 
@@ -269,23 +658,26 @@
 <body>
 
 
-<header style="position:relative;">
-    <h1>FarmLink</h1>
-    <p>Farmer Market Linkage Platform</p>
+<header>
 
-    <a href="index.html" 
-       style="display:inline-block;
-              margin-top:12px;
-              padding:8px 18px;
-              background-color:white;
-              color:#2e7d32;
-              font-weight:bold;
-              border-radius:6px;
-              text-decoration:none;
-              box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-        🏠 Home
-    </a>
+    <div class="header-top">
+        <div>
+            <h1>FarmLink</h1>
+            <p>Direct Market Linkage & Price Discovery</p>
+        </div>
+
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="farmer.html">🌱 Farmer</a>
+            <a href="buyer.html">🏪 Buyer</a>
+            <a href="transporter.html">🚚 Transporter</a>
+            <a href="login.html">🔐 Login</a>
+        </nav>
+    </div>
+
 </header>
+
+
 
 
 <div class="welcome">
@@ -315,7 +707,7 @@
         Select Crop
     </label>
 
-    <select id="crop">
+    <select id="crop" onchange="syncCropWithMarket()">
 
         <option value="">
             -- Select Crop --
@@ -365,7 +757,7 @@
         Your Location
     </label>
 
-    <select id="location">
+    <select id="location" onchange="syncLocationWithMarket()">
 
         <option value="">
             -- Select Location --
@@ -428,27 +820,35 @@
 
     </div>
 
+<p class="note">
 
-    <p class="note">
+    📷 This photo will be shared with buyers
+    so they can visually inspect your crop before
+    making an offer.
 
-        The photo will be used for AI-assisted
-        preliminary quality assessment.
-
-    </p>
-
-
-
-    <!-- ANALYZE -->
-
-    <button onclick="analyzeQuality()">
-
-        Analyze Crop Quality
-
-    </button>
+</p>
 
 
 
-    <!-- RESULT -->
+    <!-- AI QUALITY ANALYSIS -->
+<button onclick="analyzeQuality()">
+    🤖 Analyze Crop Quality
+</button>
+
+<!-- POST CROP -->
+
+<button onclick="postCropListing()">
+
+    🌾 Post Crop for Buyers
+
+</button>
+
+
+</div>
+
+
+
+    <!-- AI QUALITY RESULT -->
 
     <div id="result">
 
@@ -509,6 +909,44 @@
 
     </div>
 
+<!-- ==========================================
+     OFFICIAL MARKET PRICE REFERENCE (APMC MANDI)
+========================================== -->
+
+<div class="market-section">
+
+    <h2>
+        📊 Official Market Reference Price
+    </h2>
+
+    <p class="note">
+        Daily APMC Mandi price benchmarks from official Karnataka agricultural marketing data (Agmarknet). Use the modal price to benchmark your selling expectations and negotiations.
+    </p>
+
+    <div class="market-filter-row">
+
+        <div class="market-filter-col">
+            <label for="marketCrop">🌾 Select Crop</label>
+            <select id="marketCrop" onchange="onMarketCropChange()">
+                <option value="Tomato">Tomato</option>
+                <option value="Onion">Onion</option>
+                <option value="Potato">Potato</option>
+                <option value="Brinjal">Brinjal</option>
+                <option value="Cabbage">Cabbage</option>
+                <option value="Carrot">Carrot</option>
+            </select>
+        </div>
+
+        <div class="market-filter-col">
+            <label for="marketMandi">🏛️ Select Market (Mandi)</label>
+            <select id="marketMandi" onchange="renderMarketPrice()">
+            </select>
+        </div>
+
+    </div>
+
+    <div id="marketPriceDisplay"></div>
+
 </div>
 
 
@@ -523,6 +961,150 @@
 
 
     <div id="buyerOffers"></div>
+
+</div>
+<!-- OFFERS FOR MY CROP LISTINGS -->
+
+<div class="offers-container">
+
+    <h2>
+        🌾 Offers for My Crops
+    </h2>
+
+    <div id="cropOffers"></div>
+
+</div>
+<!-- ==========================================
+     RECOMMENDED BUYERS
+========================================== -->
+
+<div class="offers-container">
+
+    <h2>
+        ⭐ Recommended Buyers
+    </h2>
+
+    <p class="note">
+        Buyers are recommended based on crop,
+        location, quantity, and offered price.
+    </p>
+
+    <div id="recommendedBuyers"></div>
+
+</div>
+<!-- ==========================================
+     TRANSPORT BOOKINGS
+========================================== -->
+
+<div class="offers-container">
+
+    <div class="transport-section">
+
+        <h2>
+            📦 Transport Bookings
+        </h2>
+
+        <p class="note">
+            View transport bookings related to your crop transactions.
+        </p>
+
+        <div id="farmerTransportBookings"></div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     TRANSPORTER & ESTIMATED NET RETURN MODULE
+========================================== -->
+
+<div class="offers-container">
+
+    <div class="transport-section">
+
+        <h2>
+            🚚 Transporter & Estimated Net Return
+        </h2>
+
+        <p class="note">
+            The best deal isn't always the highest price — transport cost affects your actual take-home earnings. Select an available transporter and calculate your estimated net return.
+        </p>
+
+        <!-- Deal / Input Parameters -->
+        <div class="transport-inputs-grid">
+
+            <div>
+                <label for="transportCrop">🌾 Crop</label>
+                <select id="transportCrop" onchange="onTransportCropChange()">
+                    <option value="Tomato">Tomato</option>
+                    <option value="Onion">Onion</option>
+                    <option value="Potato">Potato</option>
+                    <option value="Brinjal">Brinjal</option>
+                    <option value="Cabbage">Cabbage</option>
+                    <option value="Carrot">Carrot</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="transportQuantity">⚖️ Quantity (kg)</label>
+                <input
+                    type="number"
+                    id="transportQuantity"
+                    value="100"
+                    min="1"
+                    oninput="calculateNetReturn()"
+                >
+            </div>
+
+            <div>
+                <label for="transportPrice">💰 Selling Price (₹/kg)</label>
+                <input
+                    type="number"
+                    id="transportPrice"
+                    value="32"
+                    min="1"
+                    step="0.5"
+                    oninput="calculateNetReturn()"
+                >
+            </div>
+
+        </div>
+
+        <div class="transport-inputs-grid" style="margin-top: 10px;">
+
+            <div style="grid-column: span 2;">
+                <label for="transporterSelect">🚛 Select Transporter</label>
+                <select id="transporterSelect" onchange="onTransporterChange()">
+                </select>
+            </div>
+
+            <div>
+                <label for="transportDistance">📍 Distance (km)</label>
+                <input
+                    type="number"
+                    id="transportDistance"
+                    value="20"
+                    min="1"
+                    oninput="calculateNetReturn()"
+                >
+            </div>
+
+        </div>
+
+        <!-- Selected Transporter Details Card -->
+        <div id="transporterInfoCard"></div>
+
+        <!-- Net Return Result Display -->
+        <div id="netReturnCard"></div>
+        <button
+    id="farmerBookTransportButton"
+    onclick="bookTransportFromFarmer()"
+>
+    🚚 Book Now
+</button>
+
+    </div>
 
 </div>
 
@@ -572,6 +1154,235 @@ function previewPhoto() {
 
         preview.style.display =
             "block";
+
+    }
+
+}
+
+
+
+function getCropPhotoData(file) {
+
+    return new Promise(function(resolve, reject) {
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            const image = new Image();
+
+            image.onload = function() {
+
+                const canvas =
+                    document.createElement("canvas");
+
+                const maxWidth = 800;
+
+                let width = image.width;
+                let height = image.height;
+
+                if (width > maxWidth) {
+
+                    height =
+                        height * (maxWidth / width);
+
+                    width = maxWidth;
+
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const context =
+                    canvas.getContext("2d");
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                const compressedImage =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.7
+                    );
+
+                resolve(compressedImage);
+
+            };
+
+            image.onerror = function() {
+
+                reject(
+                    "Unable to process image."
+                );
+
+            };
+
+            image.src =
+                event.target.result;
+
+        };
+
+        reader.onerror = function() {
+
+            reject(
+                "Unable to read image."
+            );
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+async function postCropListing() {
+
+    const crop =
+        document.getElementById("crop").value;
+
+    const quantity =
+        document.getElementById("quantity").value;
+
+    const location =
+        document.getElementById("location").value;
+
+    const fileInput =
+        document.getElementById("cropPhoto");
+
+
+    if (crop === "") {
+
+        alert("Please select a crop.");
+
+        return;
+
+    }
+
+
+    if (quantity === "" || quantity <= 0) {
+
+        alert("Please enter a valid quantity.");
+
+        return;
+
+    }
+
+
+    if (location === "") {
+
+        alert("Please select your location.");
+
+        return;
+
+    }
+
+
+    if (fileInput.files.length === 0) {
+
+        alert("Please upload a crop photo.");
+
+        return;
+
+    }
+
+
+    const file =
+        fileInput.files[0];
+
+
+    try {
+
+        const photoData =
+            await getCropPhotoData(file);
+
+
+        const savedUser =
+            JSON.parse(
+                localStorage.getItem("farmlinkUser")
+            ) || {};
+
+
+        const listing = {
+
+            id: String(Date.now()),
+
+            farmerName:
+                savedUser.name || "Farmer",
+            farmerMobile:
+                savedUser.mobile || "",
+
+            farmerLocation:
+                location,
+
+            crop:
+                crop,
+
+            quantity:
+                Number(quantity),
+
+            photo:
+                photoData,
+
+            status:
+                "available"
+
+        };
+
+
+        const listings =
+            JSON.parse(
+                localStorage.getItem(
+                    "farmerListings"
+                )
+            ) || [];
+
+
+        listings.push(listing);
+
+
+        localStorage.setItem(
+            "farmerListings",
+            JSON.stringify(listings)
+        );
+
+
+        alert(
+            "🌾 Your crop has been posted successfully!"
+        );
+
+
+        document.getElementById("crop")
+            .value = "";
+
+        document.getElementById("quantity")
+            .value = "";
+
+        document.getElementById("location")
+            .value = "";
+
+        document.getElementById("cropPhoto")
+            .value = "";
+
+        document.getElementById("preview")
+            .style.display = "none";
+
+        /* Refresh recommended buyers automatically after posting crop */
+        loadRecommendedBuyers();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to save the crop photo."
+        );
 
     }
 
@@ -657,6 +1468,7 @@ function analyzeQuality() {
 
 
 
+
 /* =====================================================
    FARMER LOGIN INFORMATION
 ===================================================== */
@@ -734,46 +1546,59 @@ function loadBuyerOffers() {
     */
 
     const availableOffers =
-        offers.filter(function(offer) {
+    offers.filter(function(offer) {
 
 
-            /*
-               If farmer already manually removed
-               the offer → hide it.
-            */
+    /*
+       IMPORTANT:
+       Available Buyer Offers should contain
+       ONLY normal buyer offers.
 
-            if (
-                removedIds.includes(
-                    String(offer.id)
-                )
-            ) {
+       Offers made for a farmer's crop listing
+       have a listingId, so keep them OUT of
+       this section.
+    */
 
-                return false;
+    if (offer.listingId) {
 
-            }
+        return false;
 
-
-            /*
-               If farmer rejected it,
-               automatically hide it.
-            */
-
-            if (
-                offer.status === "rejected"
-            ) {
-
-                return false;
-
-            }
+    }
 
 
-            /*
-               Everything else stays.
-            */
+    /*
+       If farmer already manually removed
+       the offer → hide it.
+    */
 
-            return true;
+    if (
+        removedIds.includes(
+            String(offer.id)
+        )
+    ) {
 
-        });
+        return false;
+
+    }
+
+
+    /*
+       If farmer rejected it,
+       automatically hide it.
+    */
+
+    if (
+        offer.status === "rejected"
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+});
 
 
 
@@ -902,6 +1727,17 @@ function loadBuyerOffers() {
 
             </p>
 
+            <p>
+
+    📞           <strong>
+                 Buyer Phone:
+              </strong>
+
+              ${offer.buyerMobile || "Not provided"}
+
+            </p>
+
+
 
             <p>
 
@@ -917,6 +1753,18 @@ function loadBuyerOffers() {
             <p class="offer-price">
 
                 💰 ₹${offer.price || 0}/kg
+                ${(function() {
+                    if (typeof getMarketPriceInfo === "function" && offer.crop) {
+                        const mkt = getMarketPriceInfo(offer.crop, offer.buyerLocation);
+                        if (mkt && mkt.modalPriceKg) {
+                            const diff = Math.round((Number(offer.price) - mkt.modalPriceKg) * 10) / 10;
+                            const diffStr = diff >= 0 ? `+₹${diff}` : `-₹${Math.abs(diff)}`;
+                            const color = diff >= 0 ? "#2e7d32" : "#c62828";
+                            return `<span style="font-size: 13px; font-weight: normal; color: ${color}; margin-left: 8px;">(Mandi Ref: ₹${mkt.modalPriceKg}/kg &bull; ${diffStr}/kg)</span>`;
+                        }
+                    }
+                    return "";
+                })()}
 
             </p>
 
@@ -1126,12 +1974,1461 @@ function removeFarmerOffer(offerId) {
 }
 
 
+/* =====================================================
+   LOAD OFFERS FOR FARMER CROP LISTINGS
+===================================================== */
+
+function loadCropOffers() {
+
+    const container =
+        document.getElementById("cropOffers");
+
+    const listings =
+        JSON.parse(
+            localStorage.getItem("farmerListings")
+        ) || [];
+
+    const offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+
+    /* -----------------------------------------------
+       OFFERS REMOVED BY THIS FARMER
+    ----------------------------------------------- */
+
+    const removedCropOffers =
+        JSON.parse(
+            localStorage.getItem(
+                "farmerRemovedCropOffers"
+            )
+        ) || [];
+
+
+    const removedIds =
+        removedCropOffers.map(function(id) {
+
+            return String(id);
+
+        });
+
+
+    /* -----------------------------------------------
+       FIND THIS FARMER'S CROP LISTINGS
+    ----------------------------------------------- */
+
+    const myListings =
+        listings.filter(function(listing) {
+
+            return (
+                String(listing.farmerName).trim() ===
+                String(currentUser.name).trim()
+            );
+
+        });
+
+
+    /* -----------------------------------------------
+       FIND OFFERS FOR THIS FARMER'S CROPS
+    ----------------------------------------------- */
+
+    const cropOffers =
+        offers.filter(function(offer) {
+
+            return (
+                myListings.some(function(listing) {
+
+                    return String(listing.id) ===
+                           String(offer.listingId);
+
+                }) &&
+
+                !removedIds.includes(
+                    String(offer.id)
+                )
+            );
+
+        });
+
+
+    /* -----------------------------------------------
+       NO OFFERS
+    ----------------------------------------------- */
+
+    if (cropOffers.length === 0) {
+
+        container.innerHTML =
+            "<p>No offers have been made for your crops yet.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    /* -----------------------------------------------
+       DISPLAY OFFERS
+    ----------------------------------------------- */
+
+    cropOffers.forEach(function(offer) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "offer-card";
+
+
+        card.innerHTML = `
+
+            <h3>
+                🏪 ${offer.businessName || "Buyer"}
+            </h3>
+
+            <p>
+                🌾 <strong>Crop:</strong>
+                ${offer.crop}
+            </p>
+
+            <p>
+                📦 <strong>Quantity:</strong>
+                ${offer.quantity} kg
+            </p>
+
+            <p>
+                📍 <strong>Buyer Location:</strong>
+                ${offer.buyerLocation || ""}
+            </p>
+            <p>
+    📞 <strong>Buyer Phone:</strong>
+    ${offer.buyerMobile || "Not provided"}
+</p>
+
+            <p class="offer-price">
+                💰 ₹${offer.price}/kg
+                ${(function() {
+                    if (typeof getMarketPriceInfo === "function" && offer.crop) {
+                        const mkt = getMarketPriceInfo(offer.crop, offer.buyerLocation || (currentUser ? currentUser.location : ""));
+                        if (mkt && mkt.modalPriceKg) {
+                            const diff = Math.round((Number(offer.price) - mkt.modalPriceKg) * 10) / 10;
+                            const diffStr = diff >= 0 ? `+₹${diff}` : `-₹${Math.abs(diff)}`;
+                            const color = diff >= 0 ? "#2e7d32" : "#c62828";
+                            return `<span style="font-size: 13px; font-weight: normal; color: ${color}; margin-left: 8px;">(Mandi Ref: ₹${mkt.modalPriceKg}/kg &bull; ${diffStr}/kg)</span>`;
+                        }
+                    }
+                    return "";
+                })()}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                ${offer.status}
+            </p>
+
+            ${
+                offer.status === "countered"
+                ?
+                `
+                <p>
+                    💬 <strong>Counter Price:</strong>
+                    ₹${offer.responsePrice}/kg
+                </p>
+                `
+                :
+                ""
+            }
+
+        `;
+
+
+        /* -------------------------------------------
+           VIEW / RESPOND BUTTON
+        ------------------------------------------- */
+
+        const respondButton =
+            document.createElement("button");
+
+        respondButton.className =
+            "offer-button";
+
+        respondButton.textContent =
+            "💬 View / Respond";
+
+        respondButton.onclick =
+            function() {
+
+                respondToOffer(
+                    offer.id
+                );
+
+            };
+
+        card.appendChild(
+            respondButton
+        );
+
+
+        /* -------------------------------------------
+           REMOVE OFFER BUTTON
+        ------------------------------------------- */
+
+        const removeButton =
+            document.createElement("button");
+
+        removeButton.className =
+            "remove-offer-button";
+
+        removeButton.textContent =
+            "🗑️ Remove Offer";
+
+        removeButton.onclick =
+            function() {
+
+                removeCropOffer(
+                    offer.id
+                );
+
+            };
+
+        card.appendChild(
+            removeButton
+        );
+
+
+        container.appendChild(card);
+
+    });
+
+}
+function removeCropOffer(offerId) {
+
+    const confirmation =
+        confirm(
+            "Remove this offer from Offers for My Crops?"
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+    let removedOffers =
+        JSON.parse(
+            localStorage.getItem(
+                "farmerRemovedCropOffers"
+            )
+        ) || [];
+
+
+    offerId =
+        String(offerId);
+
+
+    if (
+        !removedOffers
+            .map(String)
+            .includes(offerId)
+    ) {
+
+        removedOffers.push(
+            offerId
+        );
+
+    }
+
+
+    localStorage.setItem(
+        "farmerRemovedCropOffers",
+        JSON.stringify(
+            removedOffers
+        )
+    );
+
+
+    loadCropOffers();
+
+}
+function loadRecommendedBuyers() {
+
+    const container =
+        document.getElementById("recommendedBuyers");
+
+    if (!container) {
+        return;
+    }
+
+    /* ==========================================
+       GET FARMER LISTINGS
+    ========================================== */
+
+    const listings =
+        JSON.parse(
+            localStorage.getItem("farmerListings")
+        ) || [];
+
+
+    /* ==========================================
+       GET BUYER REQUIREMENTS
+    ========================================== */
+
+    const offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    /* ==========================================
+       GET CURRENT FARMER
+    ========================================== */
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+
+    /* ==========================================
+       FIND FARMER'S AVAILABLE CROPS
+    ========================================== */
+
+    const currentFarmerName =
+        String(user.name || "Farmer").trim().toLowerCase();
+
+    const myListings =
+        listings.filter(function(listing) {
+
+            const listingFarmer =
+                String(listing.farmerName || "Farmer").trim().toLowerCase();
+
+            return (
+                listingFarmer === currentFarmerName &&
+                listing.status === "available"
+            );
+
+        });
+
+
+    /* ==========================================
+       NO FARMER CROP
+    ========================================== */
+
+    if (myListings.length === 0) {
+
+        container.innerHTML =
+            "<p>No crop listing available for buyer recommendations.</p>";
+
+        return;
+    }
+
+
+    /* ==========================================
+       FIND BUYER REQUIREMENTS
+
+       Ignore offers already connected to
+       a farmer listing.
+    ========================================== */
+
+    const buyerRequirements =
+        offers.filter(function(offer) {
+
+            return (
+                offer.businessName &&
+                !offer.listingId
+            );
+
+        });
+
+
+    /* ==========================================
+       NO BUYER REQUIREMENTS
+    ========================================== */
+
+    if (buyerRequirements.length === 0) {
+
+        container.innerHTML =
+            "<p>No buyer requirements available yet.</p>";
+
+        return;
+    }
+
+
+    /* ==========================================
+       CREATE RECOMMENDATIONS
+    ========================================== */
+
+    let recommendations = [];
+
+
+    myListings.forEach(function(listing) {
+
+        buyerRequirements.forEach(function(buyer) {
+
+            let score = 0;
+
+
+            /* ==================================
+               1. CROP MATCH - 30 POINTS
+            ================================== */
+
+            if (
+                String(listing.crop || "").trim().toLowerCase() ===
+                String(buyer.crop || "").trim().toLowerCase()
+            ) {
+
+                score += 30;
+
+            }
+
+
+            /* ==================================
+               2. LOCATION MATCH - 20 POINTS
+            ================================== */
+
+            if (
+                String(listing.farmerLocation || "").trim().toLowerCase() ===
+                String(buyer.buyerLocation || "").trim().toLowerCase()
+            ) {
+
+                score += 20;
+
+            }
+
+
+            /* ==================================
+               3. QUANTITY MATCH - 20 POINTS
+            ================================== */
+
+            const farmerQuantity =
+                Number(listing.quantity);
+
+            const buyerQuantity =
+                Number(buyer.quantity);
+
+
+            if (
+                farmerQuantity >= buyerQuantity &&
+                buyerQuantity > 0
+            ) {
+
+                score += 20;
+
+            }
+
+
+            /* ==================================
+               4. PRICE ATTRACTIVENESS - 30 POINTS
+               (Comparison vs Official Mandi Benchmark)
+            ================================== */
+
+            const buyerPrice =
+                Number(buyer.price);
+
+            let priceScore = 0;
+            let marketInfo = null;
+            let marketRefPrice = null;
+            let priceDiff = null;
+
+            if (typeof getMarketPriceInfo === "function") {
+                marketInfo = getMarketPriceInfo(buyer.crop, buyer.buyerLocation || listing.farmerLocation);
+                if (marketInfo && marketInfo.modalPriceKg) {
+                    marketRefPrice = marketInfo.modalPriceKg;
+                }
+            }
+
+            if (buyerPrice > 0) {
+                if (marketRefPrice) {
+                    priceDiff = Math.round((buyerPrice - marketRefPrice) * 10) / 10;
+                    if (buyerPrice >= marketRefPrice) {
+                        // At or above official mandi benchmark -> Full 30 points
+                        priceScore = 30;
+                    } else if (marketInfo && marketInfo.minPriceKg && buyerPrice >= marketInfo.minPriceKg) {
+                        // Between mandi minimum and modal price -> 15 to 25 points
+                        const ratio = (buyerPrice - marketInfo.minPriceKg) / (marketRefPrice - marketInfo.minPriceKg || 1);
+                        priceScore = Math.round(15 + ratio * 10);
+                    } else {
+                        // Below mandi minimum price
+                        priceScore = 8;
+                    }
+                } else {
+                    // Default if no specific market benchmark found
+                    priceScore = 20;
+                }
+            }
+
+            score += priceScore;
+
+
+            /* ==================================
+               ONLY SAME CROP BUYERS (SCORE >= 30)
+            ================================== */
+
+            if (score >= 30) {
+
+                recommendations.push({
+
+                    offerId:
+                        buyer.id,
+
+                    buyerName:
+                        buyer.businessName,
+
+                    buyerLocation:
+                        buyer.buyerLocation,
+
+                    crop:
+                        buyer.crop,
+
+                    quantity:
+                        buyer.quantity,
+
+                    price:
+                        buyer.price,
+
+                    score:
+                        score,
+
+                    marketRefPrice:
+                        marketRefPrice,
+
+                    priceDiff:
+                        priceDiff,
+
+                    marketName:
+                        marketInfo ? marketInfo.market : ""
+
+                });
+
+            }
+
+        });
+
+    });
+
+
+    /* ==========================================
+       SORT HIGHEST SCORE FIRST
+    ========================================== */
+    recommendations.sort(function(a, b) {
+    return Number(b.score) - Number(a.score);
+});
+
+
+    /* ==========================================
+       REMOVE DUPLICATE BUYERS
+    ========================================== */
+
+    const uniqueRecommendations = [];
+
+    const seenBuyers = [];
+
+
+    recommendations.forEach(function(item) {
+
+        if (
+            !seenBuyers.includes(item.buyerName)
+        ) {
+
+            seenBuyers.push(
+                item.buyerName
+            );
+
+            uniqueRecommendations.push(item);
+
+        }
+
+    });
+
+
+    /* ==========================================
+       NO MATCHING BUYERS
+    ========================================== */
+
+    if (
+        uniqueRecommendations.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No matching buyers found for your crops.</p>";
+
+        return;
+    }
+
+
+    /* ==========================================
+       DISPLAY RECOMMENDATIONS
+    ========================================== */
+
+    container.innerHTML = "";
+
+
+    uniqueRecommendations.forEach(function(buyer) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "recommendation-card";
+
+        let priceComparisonHtml = "";
+        if (buyer.marketRefPrice) {
+            let diffTagClass = "diff-neutral";
+            let diffText = `⚖️ Equal to Mandi Reference Benchmark`;
+            if (buyer.priceDiff > 0) {
+                diffTagClass = "diff-positive";
+                const totalGain = Math.round(buyer.priceDiff * buyer.quantity);
+                diffText = `📈 +₹${buyer.priceDiff}/kg above mandi benchmark (+₹${totalGain.toLocaleString()} extra value for ${buyer.quantity} kg)`;
+            } else if (buyer.priceDiff < 0) {
+                diffTagClass = "diff-negative";
+                diffText = `📉 -₹${Math.abs(buyer.priceDiff)}/kg below mandi benchmark`;
+            }
+
+            priceComparisonHtml = `
+                <div class="price-compare-card">
+                    <div class="price-compare-row">
+                        <span>🏛️ <strong>Mandi Benchmark:</strong> ₹${buyer.marketRefPrice}/kg <small style="color:#666;">(${buyer.marketName || "APMC"})</small></span>
+                        <span>💰 <strong>Buyer Offer:</strong> ₹${buyer.price}/kg</span>
+                    </div>
+                    <div class="diff-badge ${diffTagClass}">
+                        ${diffText}
+                    </div>
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <h3>
+                🏪 ${buyer.buyerName}
+            </h3>
+
+            <p>
+                🌾 <strong>Crop:</strong>
+                ${buyer.crop}
+            </p>
+
+            <p>
+                📦 <strong>Required Quantity:</strong>
+                ${buyer.quantity} kg
+            </p>
+
+            <p>
+                📍 <strong>Buyer Location:</strong>
+                ${buyer.buyerLocation}
+            </p>
+
+            <p>
+                💰 <strong>Offered Price:</strong>
+                ₹${buyer.price}/kg
+            </p>
+
+            <p>
+                ⭐ <strong>Match Score:</strong>
+                <span class="score-pill">${buyer.score}/100</span>
+            </p>
+
+            ${priceComparisonHtml}
+
+            ${
+                buyer.offerId
+                ? `
+                <button
+                    class="offer-button"
+                    onclick="respondToOffer('${String(buyer.offerId)}')"
+                >
+                    💬 View / Respond
+                </button>
+                `
+                : ""
+            }
+        `;
+
+        container.appendChild(card);
+
+    });
+
+}
+
+/* =====================================================
+   OFFICIAL MARKET PRICE REFERENCE (APMC MANDI)
+===================================================== */
+
+function syncCropWithMarket() {
+    const postCrop = document.getElementById("crop").value;
+    const marketCrop = document.getElementById("marketCrop");
+    if (postCrop && marketCrop) {
+        marketCrop.value = postCrop;
+        onMarketCropChange();
+    }
+}
+
+function syncLocationWithMarket() {
+    const postLoc = document.getElementById("location").value;
+    const marketMandi = document.getElementById("marketMandi");
+    if (postLoc && marketMandi) {
+        for (let i = 0; i < marketMandi.options.length; i++) {
+            if (marketMandi.options[i].value.toLowerCase().includes(postLoc.toLowerCase())) {
+                marketMandi.selectedIndex = i;
+                renderMarketPrice();
+                break;
+            }
+        }
+    }
+}
+
+function onMarketCropChange() {
+
+    const cropSelect =
+        document.getElementById("marketCrop");
+
+    const mandiSelect =
+        document.getElementById("marketMandi");
+
+    if (!cropSelect || !mandiSelect) {
+        return;
+    }
+
+    const selectedCrop = cropSelect.value;
+    const markets = getMarketsForCrop(selectedCrop);
+
+    mandiSelect.innerHTML = "";
+
+    markets.forEach(function(mkt) {
+        const opt = document.createElement("option");
+        opt.value = mkt;
+        opt.textContent = mkt;
+        mandiSelect.appendChild(opt);
+    });
+
+    // Match farmer location if possible
+    const user =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+    const farmerLoc =
+        (user.location || "").trim().toLowerCase();
+
+    if (farmerLoc) {
+        for (let i = 0; i < mandiSelect.options.length; i++) {
+            if (mandiSelect.options[i].value.toLowerCase().includes(farmerLoc)) {
+                mandiSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
+    renderMarketPrice();
+}
+function renderMarketPrice() {
+
+    const container =
+        document.getElementById("marketPriceDisplay");
+
+    const cropSelect =
+        document.getElementById("marketCrop");
+
+    const mandiSelect =
+        document.getElementById("marketMandi");
+
+    if (!container || !cropSelect || !mandiSelect) {
+        return;
+    }
+
+    const crop = cropSelect.value;
+    const market = mandiSelect.value;
+
+    const info = getMarketPriceInfo(crop, market);
+
+    if (!info) {
+
+        container.innerHTML =
+            "<p>No official market price data available for selected crop and market.</p>";
+
+        return;
+    }
+
+    container.innerHTML = `
+
+        <div class="market-price-card">
+
+            <div class="market-header">
+
+                <div>
+
+                    <h3>
+                        🌾 ${info.commodity} &bull; ${info.market}
+                    </h3>
+
+                    <span class="market-badge">
+                        District: ${info.district}
+                        &bull;
+                        Variety: ${info.variety}
+                        &bull;
+                        Grade: ${info.grade}
+                    </span>
+
+                </div>
+
+                <div class="market-date">
+                    📅 Arrival: ${info.arrivalDate}
+                </div>
+
+            </div>
+
+
+            <div class="price-grid">
+
+                <div class="price-box">
+
+                    <div class="price-label">
+                        Min Price
+                    </div>
+
+                    <div class="price-value-kg">
+                        ₹${info.minPriceKg}/kg
+                    </div>
+
+                    <div class="price-value-quintal">
+                        (₹${info.minPriceQuintal.toLocaleString()}/quintal)
+                    </div>
+
+                </div>
+
+
+                <div class="price-box modal">
+
+                    <div class="price-label">
+                        ⭐ Modal Price (Benchmark)
+                    </div>
+
+                    <div class="price-value-kg">
+                        ₹${info.modalPriceKg}/kg
+                    </div>
+
+                    <div class="price-value-quintal">
+                        (₹${info.modalPriceQuintal.toLocaleString()}/quintal)
+                    </div>
+
+                </div>
+
+
+                <div class="price-box">
+
+                    <div class="price-label">
+                        Max Price
+                    </div>
+
+                    <div class="price-value-kg">
+                        ₹${info.maxPriceKg}/kg
+                    </div>
+
+                    <div class="price-value-quintal">
+                        (₹${info.maxPriceQuintal.toLocaleString()}/quintal)
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="market-source-note">
+
+                ℹ️
+                <em>
+                    1 Quintal = 100 kg.
+                    Modal price represents the most common daily
+                    trading price in the mandi and serves as your
+                    official reference benchmark for buyer negotiations.
+                </em>
+
+                <br>
+
+                <small style="color:#2e7d32; font-weight:bold;">
+                    🏛️ Source: Agmarknet / Karnataka State Agricultural Marketing Board
+                </small>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+/* =====================================================
+   TRANSPORTER & NET RETURN MODULE
+===================================================== */
+
+function loadTransporterModule() {
+
+    const select =
+        document.getElementById("transporterSelect");
+
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    const transporters =
+        typeof getTransporters === "function"
+            ? getTransporters()
+            : [];
+
+    transporters.forEach(function(t) {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = `${t.name} (${t.vehicle}) • ₹${t.ratePerKm}/km [${t.location}]`;
+        select.appendChild(opt);
+    });
+
+    // Auto-fill from latest accepted offer if available
+    const offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers") || "[]"
+        );
+
+    const acceptedOffer =
+        offers.find(function(o) {
+            return o.status === "accepted";
+        });
+
+    if (acceptedOffer) {
+        if (document.getElementById("transportCrop")) {
+            document.getElementById("transportCrop").value = acceptedOffer.crop || "Tomato";
+        }
+        if (document.getElementById("transportQuantity")) {
+            document.getElementById("transportQuantity").value = acceptedOffer.quantity || 100;
+        }
+        if (document.getElementById("transportPrice")) {
+            const finalP = Number(acceptedOffer.responsePrice || acceptedOffer.price || 32);
+            document.getElementById("transportPrice").value = finalP;
+        }
+    }
+
+    onTransporterChange();
+}
+
+function onTransportCropChange() {
+    calculateNetReturn();
+}
+
+function onTransporterChange() {
+
+    const select =
+        document.getElementById("transporterSelect");
+
+    const infoCard =
+        document.getElementById("transporterInfoCard");
+
+    if (!select || !infoCard) return;
+
+    const t =
+        typeof getTransporterById === "function"
+            ? getTransporterById(select.value)
+            : null;
+
+    if (!t) return;
+
+    infoCard.innerHTML = `
+        <div class="transporter-card">
+            <div class="transporter-header">
+                <h3>🚛 ${t.name}</h3>
+                <span class="transporter-badge">${t.available ? "✅ Available for Booking" : "Busy"}</span>
+            </div>
+            <div class="transporter-details-grid">
+                <div>🚚 <strong>Vehicle:</strong> ${t.vehicle}</div>
+                <div>📦 <strong>Capacity:</strong> ${t.capacity} kg</div>
+                <div>📍 <strong>Location:</strong> ${t.location}</div>
+                <div>💰 <strong>Rate:</strong> ₹${t.ratePerKm}/km</div>
+                <div>📞 <strong>Contact:</strong> ${t.contact}</div>
+            </div>
+        </div>
+    `;
+
+    calculateNetReturn();
+}
+
+function calculateNetReturn() {
+
+    const qtyInput =
+        document.getElementById("transportQuantity");
+
+    const priceInput =
+        document.getElementById("transportPrice");
+
+    const distInput =
+        document.getElementById("transportDistance");
+
+    const select =
+        document.getElementById("transporterSelect");
+
+    const resultContainer =
+        document.getElementById("netReturnCard");
+
+    if (!qtyInput || !priceInput || !distInput || !select || !resultContainer) {
+        return;
+    }
+
+    const quantity =
+        parseFloat(qtyInput.value) || 0;
+
+    const price =
+        parseFloat(priceInput.value) || 0;
+
+    const distance =
+        parseFloat(distInput.value) || 0;
+
+    const t =
+        typeof getTransporterById === "function"
+            ? getTransporterById(select.value)
+            : { ratePerKm: 25 };
+
+    const ratePerKm =
+        t ? t.ratePerKm : 25;
+
+    // Calculations
+    const grossSaleValue =
+        Math.round(quantity * price);
+
+    const transportCost =
+        Math.round(distance * ratePerKm);
+
+    const estimatedNetReturn =
+        grossSaleValue - transportCost;
+
+    const netRealizedPerKg =
+        quantity > 0
+            ? (Math.round((estimatedNetReturn / quantity) * 10) / 10)
+            : 0;
+
+    const retentionPercent =
+        grossSaleValue > 0
+            ? (Math.round((estimatedNetReturn / grossSaleValue) * 1000) / 10)
+            : 0;
+
+    resultContainer.innerHTML = `
+        <div class="net-return-box">
+            <div class="net-return-row">
+                <span>💰 <strong>Gross Sale Value:</strong> <small>(${quantity} kg × ₹${price}/kg)</small></span>
+                <span class="gross-val">₹${grossSaleValue.toLocaleString()}</span>
+            </div>
+
+            <div class="net-return-row">
+                <span>🚚 <strong>Transport Cost:</strong> <small>(${distance} km × ₹${ratePerKm}/km by ${t ? t.name : "Transporter"})</small></span>
+                <span class="transport-val">- ₹${transportCost.toLocaleString()}</span>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed #a5d6a7; margin: 10px 0;">
+
+            <div class="net-return-row total-row">
+                <span>✅ <strong>Estimated Net Return:</strong></span>
+                <span class="net-val">₹${estimatedNetReturn.toLocaleString()}</span>
+            </div>
+
+            <div class="net-return-insight">
+                💡 <em>Farmer's Net Realized Price: <strong>₹${netRealizedPerKg}/kg</strong>. Farmer retains <strong>${retentionPercent}%</strong> of gross sales after logistics.</em>
+            </div>
+        </div>
+    `;
+}
+
+/* =====================================================
+   BOOK TRANSPORT FROM FARMER SIDE
+===================================================== */
+
+function bookTransportFromFarmer() {
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+    const crop =
+        document.getElementById("transportCrop").value;
+
+    const quantity =
+        Number(
+            document.getElementById("transportQuantity").value
+        );
+
+    const price =
+        Number(
+            document.getElementById("transportPrice").value
+        );
+
+    const distance =
+        Number(
+            document.getElementById("transportDistance").value
+        );
+
+    const transporterSelect =
+        document.getElementById("transporterSelect");
+
+    const transporter =
+        typeof getTransporterById === "function"
+            ? getTransporterById(transporterSelect.value)
+            : null;
+
+    if (!currentUser.name) {
+
+        alert("Farmer information not found. Please login again.");
+
+        return;
+
+    }
+
+    if (!crop || quantity <= 0 || price <= 0 || distance <= 0) {
+
+        alert("Please enter valid transport details.");
+
+        return;
+
+    }
+
+    if (!transporter) {
+
+        alert("Please select a transporter.");
+
+        return;
+
+    }
+    localStorage.setItem(
+    "selectedTransporterId",
+    transporter.id
+);
+
+    if (!transporter.available) {
+
+        alert("This transporter is currently unavailable.");
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       FIND ACCEPTED BUYER OFFER
+    ========================================== */
+
+    const offers =
+        JSON.parse(
+            localStorage.getItem("farmlinkOffers")
+        ) || [];
+
+
+    const acceptedOffer =
+        offers.find(function(offer) {
+
+            return (
+                offer.status === "accepted" &&
+                String(offer.farmerName || "").trim().toLowerCase() ===
+                String(currentUser.name || "").trim().toLowerCase()
+            );
+
+        });
+
+
+    if (!acceptedOffer) {
+
+        alert(
+            "⚠️ No accepted buyer transaction found.\n\n" +
+            "Please accept a buyer offer before booking transport."
+        );
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       BUYER INFORMATION
+    ========================================== */
+
+    const buyerName =
+        acceptedOffer.businessName || "Buyer";
+
+
+    const pickupLocation =
+        acceptedOffer.farmerLocation ||
+        currentUser.location ||
+        "Farmer Location";
+
+
+    const deliveryLocation =
+        acceptedOffer.buyerLocation ||
+        "Buyer Location";
+
+
+    /* ==========================================
+       CALCULATE TRANSPORT COST
+    ========================================== */
+
+    const transportCost =
+        Math.round(
+            distance * Number(transporter.ratePerKm)
+        );
+
+
+    /* ==========================================
+       CHECK EXISTING BOOKING
+    ========================================== */
+
+    const existingBookings =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkTransportBookings"
+            )
+        ) || [];
+
+
+    const alreadyBooked =
+        existingBookings.some(function(booking) {
+
+            return (
+                String(booking.offerId) ===
+                String(acceptedOffer.id)
+            );
+
+        });
+
+
+    if (alreadyBooked) {
+
+        alert(
+            "🚚 Transport has already been booked for this transaction."
+        );
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       CREATE BOOKING
+    ========================================== */
+
+    const booking = {
+
+        bookingId:
+            "TR" + Date.now(),
+
+        offerId:
+            acceptedOffer.id,
+
+        farmerName:
+            currentUser.name,
+
+        buyerName:
+            buyerName,
+
+        transporterId:
+            transporter.id,
+
+        transporterName:
+            transporter.name,
+
+        vehicle:
+            transporter.vehicle,
+
+        contact:
+            transporter.contact,
+
+        crop:
+            crop,
+
+        quantity:
+            quantity,
+
+        pickupLocation:
+            pickupLocation,
+
+        deliveryLocation:
+            deliveryLocation,
+
+        distance:
+            distance,
+
+        ratePerKm:
+            Number(transporter.ratePerKm),
+
+        transportCost:
+            transportCost,
+
+        sellingPrice:
+            price,
+
+        status:
+            "booked",
+
+        bookedBy:
+            "farmer",
+
+        bookedAt:
+            new Date().toISOString()
+
+    };
+
+
+    /* ==========================================
+       SAVE BOOKING
+    ========================================== */
+
+    existingBookings.push(booking);
+
+
+    localStorage.setItem(
+        "farmlinkTransportBookings",
+        JSON.stringify(existingBookings)
+    );
+
+
+    /* ==========================================
+       REFRESH FARMER BOOKINGS
+    ========================================== */
+
+    loadFarmerTransportBookings();
+
+
+    alert(
+        "🚚 Transport booked successfully!\n\n" +
+        "Transporter: " + transporter.name + "\n" +
+        "Transport Cost: ₹" + transportCost.toLocaleString() + "\n" +
+        "Booking ID: " + booking.bookingId
+    );
+
+}
+
+/* =====================================================
+   LOAD FARMER TRANSPORT BOOKINGS
+===================================================== */
+
+function loadFarmerTransportBookings() {
+
+    const container =
+        document.getElementById("farmerTransportBookings");
+
+    if (!container) {
+        return;
+    }
+
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem("farmlinkUser")
+        ) || {};
+
+    const bookings =
+        JSON.parse(
+            localStorage.getItem("farmlinkTransportBookings")
+        ) || [];
+
+    const myBookings =
+        bookings.filter(function(booking) {
+
+            return (
+                String(booking.farmerName || "").trim().toLowerCase() ===
+                String(currentUser.name || "").trim().toLowerCase()
+            );
+
+        });
+
+    if (myBookings.length === 0) {
+
+        container.innerHTML =
+            "<p>No transport bookings found for your crop transactions yet.</p>";
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    myBookings.forEach(function(booking) {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "offer-card";
+
+        card.innerHTML = `
+            <h3>
+                🚚 ${booking.transporterName || "Transporter"}
+            </h3>
+
+            <p>
+                🌾 <strong>Crop:</strong>
+                ${booking.crop || ""}
+            </p>
+
+            <p>
+                ⚖️ <strong>Quantity:</strong>
+                ${booking.quantity || 0} kg
+            </p>
+
+            <p>
+                📍 <strong>Pickup:</strong>
+                ${booking.pickupLocation || ""}
+            </p>
+
+            <p>
+                🏁 <strong>Delivery:</strong>
+                ${booking.deliveryLocation || ""}
+            </p>
+
+            <p>
+                📏 <strong>Distance:</strong>
+                ${booking.distance || 0} km
+            </p>
+
+            <p>
+                💰 <strong>Transport Cost:</strong>
+                ₹${Number(booking.transportCost || 0).toLocaleString()}
+            </p>
+
+            <p>
+                🚛 <strong>Vehicle:</strong>
+                ${booking.vehicle || ""}
+            </p>
+
+            <p>
+                📞 <strong>Contact:</strong>
+                ${booking.contact || ""}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span class="status status-accepted">
+                    ${booking.status || "Booked"}
+                </span>
+            </p>
+
+            <p class="note">
+                Booking ID: ${booking.bookingId || ""}
+            </p>
+        `;
+
+        container.appendChild(card);
+
+    });
+}
 
 /* =====================================================
    INITIAL LOAD
 ===================================================== */
 
 loadBuyerOffers();
+loadCropOffers();
+loadRecommendedBuyers();
+onMarketCropChange();
+loadTransporterModule();
+loadFarmerTransportBookings();
 
 </script>
 
