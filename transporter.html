@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink - Transporter</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8f3;
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .section {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .booking-card {
+            background-color: #f9fff8;
+            border-left: 5px solid #2e7d32;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .booking-card h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .booking-card p {
+            margin: 8px 0;
+        }
+
+        .button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .accept-button {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .reject-button {
+            background-color: #c62828;
+            color: white;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .empty {
+            color: #777;
+            padding: 15px 0;
+        }
+        .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.header-top nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.header-top nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.header-top nav a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.header-top h1 {
+    margin-bottom: 5px;
+}
+
+.header-top p {
+    margin-top: 0;
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="header-top">
+        <div>
+            <h1>🚚 FarmLink</h1>
+            <p>Direct Market Linkage & Price Discovery</p>
+        </div>
+
+        <nav>
+            <a href="index.html">🏠 Home</a>
+            <a href="farmer.html">🌱 Farmer</a>
+            <a href="buyer.html">🏪 Buyer</a>
+            <a href="transporter.html">🚚 Transporter</a>
+            <a href="login.html">🔐 Login</a>
+        </nav>
+    </div>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="section">
+        <h2>🚚 Select Transporter</h2>
+
+        <label for="transporterSelector">
+            Choose the transporter whose bookings you want to view:
+        </label>
+
+        <select
+            id="transporterSelector"
+            onchange="changeTransporter()"
+            style="
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 15px;
+            "
+        ></select>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>🚚 Transporter Profile</h2>
+
+        <p>
+            <strong>Transporter:</strong>
+            <span id="transporterName"></span>
+        </p>
+
+        <p>
+            <strong>Vehicle:</strong>
+            <span id="transporterVehicle"></span>
+        </p>
+
+        <p>
+            <strong>Location:</strong>
+            <span id="transporterLocation"></span>
+        </p>
+
+        <p>
+            <strong>Rate:</strong>
+            ₹<span id="transporterRate"></span>/km
+        </p>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>📦 Transport Booking Requests</h2>
+
+        <div id="bookingList"></div>
+
+    </div>
+
+
+</div>
+
+
+<script src="marketData.js"></script>
+
+
+<script>
+
+
+// --------------------------------------------------
+// SELECT TRANSPORTER
+// --------------------------------------------------
+
+let selectedTransporterId =
+    localStorage.getItem("selectedTransporterId") || "trans-1";
+    console.log("Selected Transporter ID:", selectedTransporterId);
+console.log("All Bookings:", localStorage.getItem("farmlinkTransportBookings"));
+
+
+let transporter =
+    getTransporterById(selectedTransporterId);
+
+// --------------------------------------------------
+// LOAD TRANSPORTER SELECTOR
+// --------------------------------------------------
+
+function loadTransporterSelector() {
+
+    const selector =
+        document.getElementById("transporterSelector");
+
+    if (!selector) return;
+
+    const transporters =
+        typeof getTransporters === "function"
+            ? getTransporters()
+            : [];
+
+    selector.innerHTML = "";
+
+    transporters.forEach(function(t) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = t.id;
+
+        option.textContent =
+            `${t.name} — ${t.vehicle}`;
+
+        selector.appendChild(option);
+
+    });
+
+    selector.value = selectedTransporterId;
+
+    // If saved ID does not exist, select first transporter
+    if (!selector.value && transporters.length > 0) {
+
+        selectedTransporterId =
+            transporters[0].id;
+
+        selector.value =
+            selectedTransporterId;
+
+        localStorage.setItem(
+            "selectedTransporterId",
+            selectedTransporterId
+        );
+
+    }
+
+}
+
+
+// --------------------------------------------------
+// CHANGE TRANSPORTER
+// --------------------------------------------------
+
+function changeTransporter() {
+
+    const selector =
+        document.getElementById("transporterSelector");
+
+    if (!selector) return;
+
+    selectedTransporterId =
+        selector.value;
+
+    localStorage.setItem(
+        "selectedTransporterId",
+        selectedTransporterId
+    );
+
+    transporter =
+        getTransporterById(selectedTransporterId);
+
+    loadTransporterProfile();
+
+    loadBookings();
+
+}
+
+// --------------------------------------------------
+// LOAD TRANSPORTER PROFILE
+// --------------------------------------------------
+
+function loadTransporterProfile() {
+
+    if (!transporter) {
+
+        document.getElementById("transporterName").textContent =
+            "Transporter not found";
+
+        return;
+
+    }
+
+
+    document.getElementById("transporterName").textContent =
+        transporter.name;
+
+    document.getElementById("transporterVehicle").textContent =
+        transporter.vehicle;
+
+    document.getElementById("transporterLocation").textContent =
+        transporter.location;
+
+    document.getElementById("transporterRate").textContent =
+        transporter.ratePerKm;
+
+}
+
+
+// --------------------------------------------------
+// LOAD BOOKINGS
+// --------------------------------------------------
+
+function loadBookings() {
+
+    const container =
+        document.getElementById("bookingList");
+
+
+    const bookings =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkTransportBookings"
+            ) || "[]"
+        );
+
+
+    const myBookings =
+        bookings.filter(function(booking) {
+
+            return String(booking.transporterId) ===
+                   String(selectedTransporterId);
+
+        });
+
+
+    if (myBookings.length === 0) {
+
+        container.innerHTML =
+            '<p class="empty">No transport booking requests yet.</p>';
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    myBookings.forEach(function(booking) {
+
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "booking-card";
+
+
+        card.innerHTML = `
+
+            <h3>📦 Booking ${booking.bookingId}</h3>
+
+            <p>
+                🌾 <strong>Crop:</strong>
+                ${booking.crop}
+            </p>
+
+            <p>
+                📦 <strong>Quantity:</strong>
+                ${booking.quantity} kg
+            </p>
+
+            <p>
+                📍 <strong>Pickup:</strong>
+                ${booking.pickupLocation}
+            </p>
+
+            <p>
+                📍 <strong>Delivery:</strong>
+                ${booking.deliveryLocation}
+            </p>
+
+            <p>
+                📏 <strong>Distance:</strong>
+                ${booking.distance} km
+            </p>
+
+            <p>
+                💰 <strong>Transport Cost:</strong>
+                ₹${Number(booking.transportCost).toFixed(2)}
+            </p>
+
+            <p>
+                👤 <strong>Buyer:</strong>
+                ${booking.buyerName || "Buyer"}
+            </p>
+
+            <p>
+                📌 <strong>Status:</strong>
+                <span class="status">
+                    ${booking.status}
+                </span>
+            </p>
+
+            <br>
+
+            ${
+                booking.status === "booked"
+                ?
+
+                `
+                <button
+                    class="button accept-button"
+                    onclick="updateBookingStatus('${booking.bookingId}', 'accepted')">
+
+                    ✅ Accept Booking
+
+                </button>
+
+
+                <button
+                    class="button reject-button"
+                    onclick="updateBookingStatus('${booking.bookingId}', 'rejected')">
+
+                    ❌ Reject Booking
+
+                </button>
+         
+                `
+
+                :
+
+                ""
+            }
+                <button
+                <button onclick="removeTransportBooking('${booking.bookingId}')">
+                     🗑️ Remove
+                </button>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+function removeTransportBooking(bookingId) {
+
+    if (!confirm("Are you sure you want to remove this booking request?")) {
+        return;
+    }
+
+    let bookings =
+        JSON.parse(localStorage.getItem("farmlinkTransportBookings")) || [];
+
+    bookings = bookings.filter(
+        booking => String(booking.bookingId) !== String(bookingId)
+    );
+
+    localStorage.setItem(
+        "farmlinkTransportBookings",
+        JSON.stringify(bookings)
+    );
+
+    loadBookings();
+
+    alert("🗑️ Booking request removed.");
+}
+
+
+// --------------------------------------------------
+// ACCEPT / REJECT BOOKING
+// --------------------------------------------------
+
+function updateBookingStatus(bookingId, newStatus) {
+
+
+    const bookings =
+        JSON.parse(
+            localStorage.getItem(
+                "farmlinkTransportBookings"
+            ) || "[]"
+        );
+
+
+    const booking =
+        bookings.find(function(item) {
+
+            return String(item.bookingId) ===
+                   String(bookingId);
+
+        });
+
+
+    if (!booking) {
+
+        alert("Booking not found.");
+
+        return;
+
+    }
+
+
+    booking.status =
+        newStatus;
+
+
+    booking.statusUpdatedAt =
+        new Date().toISOString();
+
+
+    localStorage.setItem(
+        "farmlinkTransportBookings",
+        JSON.stringify(bookings)
+    );
+
+
+    alert(
+        newStatus === "accepted"
+        ? "Booking accepted successfully."
+        : "Booking rejected."
+    );
+
+
+    loadBookings();
+
+}
+
+
+// --------------------------------------------------
+// PAGE LOAD
+// --------------------------------------------------
+
+loadTransporterSelector();
+
+loadTransporterProfile();
+
+loadBookings();
+
+
+</script>
+
+
+</body>
+
+</html>
